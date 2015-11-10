@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_menu_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/drawer_menu_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/list_item_option" >
+
+        <ImageView
+            android:id="@+id/drawer_menu_item_image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginStart="20dp"
+            android:contentDescription="@string/content_description"
+            android:padding="10dp"
+            android:scaleType="centerCrop" />
+
+        <TextView
+            android:id="@+id/drawer_menu_item_text"
+            style="@style/drawer_menu_item_text_style"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@id/drawer_menu_item_image"
+            android:layout_toRightOf="@id/drawer_menu_item_image"
+            android:contentDescription="@string/content_description"
+            android:gravity="start|fill_vertical"
+            android:textColor="@android:color/white" />
+
+        <View
+            android:id="@+id/separate_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/Gray" />
+    </RelativeLayout>
+
+</LinearLayout>
