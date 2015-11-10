@@ -2,5 +2,10 @@
 <resources>
 
     <string name="app_name">智慧充電站</string>
+    <string name="content_description"></string>
+    <string name="start_charge">開始充電</string>
+    <string name="select_station">選擇充電站</string>
+    <string name="location_station">站台位置</string>
+    <string name="copy_right">版權宣告</string>
 
 </resources>
