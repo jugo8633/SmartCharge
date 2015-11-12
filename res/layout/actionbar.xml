@@ -20,7 +20,7 @@
             android:layout_marginStart="13dp"
             android:background="#00000000"
             android:contentDescription="@string/content_description"
-            android:src="@drawable/act_br_menu" />
+            android:src="@drawable/btn_menu" />
 
         <TextView
             android:id="@+id/TextViewPoint"
@@ -44,7 +44,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginRight="15dp"
             android:contentDescription="@string/content_description"
-            android:src="@drawable/act_br_back"
+            android:src="@drawable/btn_back"
             android:visibility="invisible" />
 
         <ImageView
@@ -55,7 +55,7 @@
             android:layout_toLeftOf="@+id/TextViewPoint"
             android:layout_toStartOf="@+id/TextViewPoint"
             android:contentDescription="@string/content_description"
-            android:src="@drawable/smart_charge" />
+            android:src="@drawable/icon" />
     </RelativeLayout>
 
 </LinearLayout>

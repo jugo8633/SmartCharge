@@ -68,10 +68,11 @@ public class ListMenuHandler extends BaseHandler
 
 		menuAdapter = new MenuAdapter();
 
-		addItem(PAGE_CHARGE, theActivity.getString(R.string.start_charge), R.drawable.smart_charge);
-		addItem(PAGE_SELECT_STATION, theActivity.getString(R.string.select_station), R.drawable.smart_charge);
-		addItem(PAGE_LOCATION_STATION, theActivity.getString(R.string.location_station), R.drawable.smart_charge);
-		addItem(PAGE_ABOUT, theActivity.getString(R.string.copy_right), R.drawable.smart_charge);
+		addItem(PAGE_CHARGE, theActivity.getString(R.string.start_charge), R.drawable.btn_charge);
+		addItem(PAGE_SELECT_STATION, theActivity.getString(R.string.select_station), R.drawable.btn_select_station);
+		addItem(PAGE_LOCATION_STATION, theActivity.getString(R.string.location_station),
+				R.drawable.btn_station_location);
+		addItem(PAGE_ABOUT, theActivity.getString(R.string.copy_right), R.drawable.copy_right);
 
 		start();
 

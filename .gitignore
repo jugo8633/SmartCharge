@@ -11,6 +11,13 @@
 # Generated files
 bin/
 gen/
+/gen
+/bin
+/build
+
+*/gen
+*/bin
+*/build
 
 # Gradle files
 .gradle/

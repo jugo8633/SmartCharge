@@ -1,20 +1,50 @@
 package org.iii.smartcharge;
 
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import org.iii.smartcharge.common.Common;
+import org.iii.smartcharge.common.Global;
+import org.iii.smartcharge.common.Logs;
 import org.iii.smartcharge.common.MSG;
 import org.iii.smartcharge.handler.ActionbarHandler;
 import org.iii.smartcharge.handler.DrawerMenuHandler;
 import org.iii.smartcharge.handler.ListMenuHandler;
+import org.iii.smartcharge.module.FacebookHandler;
+import org.iii.smartcharge.view.GaugeView;
+
+import com.facebook.appevents.AppEventsLogger;
+
 import android.app.Activity;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.TextView;
 
 public class MainActivity extends Activity
 {
 	private ActionbarHandler	actionbarHandler	= null;
 	private DrawerMenuHandler	drawerMenu			= null;
 	private ListMenuHandler		listMenuHandler		= null;
-	private final int			LAYOUT_MAIN			= 0;
+	private GaugeView			powerGauge			= null;
+	private Timer				chkChargeTimer		= null;
+	private final int			LAYOUT_MAIN			= 2;
+	private final int			LAYOUT_LOGIN		= 1;
+	private Intent				batteryStatus		= null;
+	private TextView			tvNotify			= null;
+	private TextView			tvBatteryState		= null;
+	private boolean				mbCharging			= false;
+	private IntentFilter		filterCharge		= null;
+	private int					mnBatteryLevel		= 0;
+	private TextView			btnFacebook			= null;
+	private TextView			btnSkip				= null;
+	private FacebookHandler		facebook			= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -23,16 +53,57 @@ public class MainActivity extends Activity
 
 		this.getActionBar().hide();
 		showStartUp();
+
+		filterCharge = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+		AppEventsLogger.activateApp(this);
+	}
+
+	@Override
+	protected void onPause()
+	{
+		super.onPause();
+		AppEventsLogger.deactivateApp(this);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		super.onActivityResult(requestCode, resultCode, data);
+		FacebookHandler.callbackManager.onActivityResult(requestCode, resultCode, data);
 	}
 
 	private void showStartUp()
 	{
 		setContentView(R.layout.start_up);
-		selfHandler.sendEmptyMessageDelayed(LAYOUT_MAIN, 3000);
+		selfHandler.sendEmptyMessageDelayed(LAYOUT_LOGIN, 3000);
+	}
+
+	private void showLogin()
+	{
+		setContentView(R.layout.login);
+		btnFacebook = (TextView) findViewById(R.id.textViewLoginFacebook);
+		if (null != btnFacebook)
+		{
+			btnFacebook.setOnClickListener(itemClickListener);
+		}
+		btnSkip = (TextView) findViewById(R.id.textViewLoginSkip);
+		if (null != btnSkip)
+		{
+			btnSkip.setOnClickListener(itemClickListener);
+		}
 	}
 
 	private void showMainLayout()
 	{
+		Global.mainHandler = selfHandler;
+
 		setContentView(R.layout.activity_main);
 		actionbarHandler = new ActionbarHandler(this, selfHandler);
 		actionbarHandler.init();
@@ -40,7 +111,26 @@ public class MainActivity extends Activity
 		drawerMenu.init(R.id.drawer_layout);
 		listMenuHandler = new ListMenuHandler(this, selfHandler);
 		listMenuHandler.init();
+		powerGauge = (GaugeView) findViewById(R.id.gaugeViewPower);
+		powerGauge.setBackgroundResource(R.drawable.gauge_background);
+		powerGauge.setAmount(-90);
 		this.getActionBar().show();
+
+		tvNotify = (TextView) findViewById(R.id.textViewChargeNotify);
+		tvBatteryState = (TextView) findViewById(R.id.textViewBatteryState);
+
+		if (null == chkChargeTimer)
+		{
+			chkChargeTimer = new Timer();
+			setChargeTimerTask();
+		}
+
+	}
+
+	private void showQrScanner()
+	{
+		Intent openCameraIntent = new Intent(MainActivity.this, QrScanerActivity.class);
+		startActivityForResult(openCameraIntent, QrScanerActivity.ACTIVITY_REQUEST_CODE);
 	}
 
 	private void switchPage(final int nPage)
@@ -56,21 +146,138 @@ public class MainActivity extends Activity
 		 * switch (nPage) { case ListMenuHandler.PAGE_GIFT:
 		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_GIFT);
 		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "Gift Page", "ßIº˙", "Draw Menu"); break; case
+		 * "Gift Page", "ÂÖåÁçé", "Draw Menu"); break; case
 		 * ListMenuHandler.PAGE_STORE:
 		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_FIELD);
 		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "Field Page", "¶Xß@∞”©±", "Draw Menu"); break; case
+		 * "Field Page", "Âêà‰ΩúÂïÜÂ∫ó", "Draw Menu"); break; case
 		 * ListMenuHandler.PAGE_ACCOUNT:
 		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_ACCOUNT);
 		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "Account Page", "±b§·", "Draw Menu"); break; case
+		 * "Account Page", "Â∏≥Êà∂", "Draw Menu"); break; case
 		 * ListMenuHandler.PAGE_SUPPORT: break; case
 		 * ListMenuHandler.PAGE_ABOUNT:
 		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_ABOUT);
 		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "About Page", "√ˆ©Û", "Draw Menu"); break; }
+		 * "About Page", "ÈóúÊñº", "Draw Menu"); break; }
 		 */
+	}
+
+	private void setChargeTimerTask()
+	{
+		chkChargeTimer.schedule(new TimerTask()
+		{
+			@Override
+			public void run()
+			{
+				batteryStatus = registerReceiver(null, filterCharge);
+
+				/** Get Battery State **/
+				int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+				int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+				int state = (int) ((level / (float) scale) * 100);
+
+				/** Get Charge State **/
+				int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+				boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
+						|| status == BatteryManager.BATTERY_STATUS_FULL;
+
+				if (mbCharging != isCharging || mnBatteryLevel != state)
+				{
+					mbCharging = isCharging;
+					mnBatteryLevel = state;
+					Logs.showTrace("Battery level:" + String.valueOf(mnBatteryLevel));
+
+					if (mbCharging)
+					{
+						int chargePlug = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+						boolean usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB;
+						boolean acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
+						if (usbCharge)
+						{
+							Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING, MSG.CHARGE_USB, null);
+						}
+						else if (acCharge)
+						{
+							Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING, MSG.CHARGE_AC, null);
+						}
+						else
+						{
+							Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING, 0, null);
+						}
+					}
+					else
+					{
+						Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING_NOT, 0, null);
+					}
+				}
+
+			}
+		}, 500, 1000);
+	}
+
+	private void setChargeState(int nIsCharge, int nChargeType)
+	{
+		if (null == tvBatteryState)
+			return;
+		String strState = null;
+		boolean bCharging = nIsCharge == MSG.CHARGING ? true : false;
+		if (bCharging)
+		{
+			switch(nChargeType)
+			{
+			case MSG.CHARGE_USB:
+				strState = String.format(Locale.CHINESE, "%d%% - ÂÖÖÈõª‰∏≠(USB)", mnBatteryLevel);
+				break;
+			case MSG.CHARGE_AC:
+				strState = String.format(Locale.CHINESE, "%d%% - ÂÖÖÈõª‰∏≠(AC)", mnBatteryLevel);
+				break;
+			default:
+				strState = String.format(Locale.CHINESE, "%d%% - ÂÖÖÈõª‰∏≠", mnBatteryLevel);
+				break;
+			}
+		}
+		else
+		{
+			strState = String.format(Locale.CHINESE, "%d%% - ÈùûÂÖÖÈõª‰∏≠", mnBatteryLevel);
+		}
+		tvBatteryState.setText(strState);
+		int nDegress = (int) ((mnBatteryLevel * 1.8) - 90);
+		powerGauge.setAmount(nDegress);
+	}
+
+	private OnClickListener itemClickListener = new OnClickListener()
+	{
+		@Override
+		public void onClick(View v)
+		{
+			switch(v.getId())
+			{
+			case R.id.textViewLoginFacebook:
+				showFacebookLogin();
+				break;
+			case R.id.textViewLoginSkip:
+				showMainLayout();
+				break;
+			}
+		}
+	};
+
+	private void showFacebookLogin()
+	{
+		Logs.showTrace("Facebook Login Start");
+		facebook = new FacebookHandler(this);
+		facebook.init();
+		facebook.setOnFacebookLoginResultListener(new FacebookHandler.OnFacebookLoginResult()
+		{
+			@Override
+			public void onLoginResult(String strFBID, String strName, String strEmail, String strError)
+			{
+				Common.postMessage(selfHandler, LAYOUT_MAIN, 0, 0, null);
+				Logs.showTrace("Login Facebook: " + strFBID + " " + strName + " " + strEmail + " " + strError);
+			}
+		});
+		facebook.login();
 	}
 
 	private Handler selfHandler = new Handler()
@@ -78,23 +285,29 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch (msg.what)
+			switch(msg.what)
 			{
-				case LAYOUT_MAIN:
-					showMainLayout();
-					break;
-				case MSG.MENU_CLICK:
-					drawerMenu.switchDisplay();
-					break;
-				case MSG.DRAWER_OPEN:
-					actionbarHandler.setMenuState(true);
-					break;
-				case MSG.DRAWER_CLOSE:
-					actionbarHandler.setMenuState(false);
-					break;
-				case MSG.MENU_SELECTED:
-					switchPage(msg.arg1);
-					break;
+			case LAYOUT_LOGIN:
+				showLogin();
+				break;
+			case LAYOUT_MAIN:
+				showMainLayout();
+				break;
+			case MSG.MENU_CLICK:
+				drawerMenu.switchDisplay();
+				break;
+			case MSG.DRAWER_OPEN:
+				actionbarHandler.setMenuState(true);
+				break;
+			case MSG.DRAWER_CLOSE:
+				actionbarHandler.setMenuState(false);
+				break;
+			case MSG.MENU_SELECTED:
+				switchPage(msg.arg1);
+				break;
+			case MSG.CHARGE_STATE:
+				setChargeState(msg.arg1, msg.arg2);
+				break;
 			}
 		}
 
