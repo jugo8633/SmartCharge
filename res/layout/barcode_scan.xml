@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:contentDescription="@string/content_description"
-            android:scaleType="fitXY"
+            android:scaleType="centerInside"
             android:src="@drawable/a_sight_block" />
 
         <View
@@ -37,6 +37,7 @@
             android:layout_toEndOf="@id/viewSperater"
             android:layout_toRightOf="@id/viewSperater"
             android:contentDescription="@string/content_description"
+            android:scaleType="centerInside"
             android:src="@drawable/a_sight" />
 
         <ImageView
@@ -47,6 +48,7 @@
             android:layout_toLeftOf="@id/viewSperater"
             android:layout_toStartOf="@id/viewSperater"
             android:contentDescription="@string/content_description"
+            android:scaleType="centerInside"
             android:src="@drawable/a_sight" />
 
     </RelativeLayout>

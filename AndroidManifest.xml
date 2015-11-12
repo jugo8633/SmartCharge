@@ -64,6 +64,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
 
+        <!-- QR Code Scanner Activity -->
+        <activity android:name="org.iii.smartcharge.QrScanerActivity" >
+        </activity>
+
         <receiver android:name="org.iii.smartcharge.module.PowerConnectionReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />

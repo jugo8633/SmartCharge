@@ -24,13 +24,13 @@ import android.widget.TextView;
 public class ListMenuHandler extends BaseHandler
 {
 
-	public final static int	PAGE_CHARGE				= 0;
-	public final static int	PAGE_SELECT_STATION		= 1;
-	public final static int	PAGE_LOCATION_STATION	= 2;
-	public final static int	PAGE_ABOUT				= 3;
+	public final static int	ITEM_CHARGE				= 0;
+	public final static int	ITEM_SELECT_STATION		= 1;
+	public final static int	ITEM_LOCATION_STATION	= 2;
+	public final static int	ITEM_COPY_RIGHT			= 3;
 
-	private ListView	listView	= null;
-	private MenuAdapter	menuAdapter	= null;
+	private ListView		listView				= null;
+	private MenuAdapter		menuAdapter				= null;
 
 	public static class MenuData
 	{
@@ -68,11 +68,11 @@ public class ListMenuHandler extends BaseHandler
 
 		menuAdapter = new MenuAdapter();
 
-		addItem(PAGE_CHARGE, theActivity.getString(R.string.start_charge), R.drawable.btn_charge);
-		addItem(PAGE_SELECT_STATION, theActivity.getString(R.string.select_station), R.drawable.btn_select_station);
-		addItem(PAGE_LOCATION_STATION, theActivity.getString(R.string.location_station),
+		addItem(ITEM_CHARGE, theActivity.getString(R.string.start_charge), R.drawable.btn_charge);
+		addItem(ITEM_SELECT_STATION, theActivity.getString(R.string.select_station), R.drawable.btn_select_station);
+		addItem(ITEM_LOCATION_STATION, theActivity.getString(R.string.location_station),
 				R.drawable.btn_station_location);
-		addItem(PAGE_ABOUT, theActivity.getString(R.string.copy_right), R.drawable.copy_right);
+		addItem(ITEM_COPY_RIGHT, theActivity.getString(R.string.copy_right), R.drawable.copy_right);
 
 		start();
 
@@ -200,10 +200,10 @@ public class ListMenuHandler extends BaseHandler
 				{
 					switch (event.getAction())
 					{
-						case MotionEvent.ACTION_DOWN:
-							Logs.showTrace("list item click id:" + String.valueOf((Integer) v.getTag()));
-							ListMenuHandler.this.postMsg(MSG.MENU_SELECTED, (Integer) v.getTag(), 0, null);
-							break;
+					case MotionEvent.ACTION_DOWN:
+						Logs.showTrace("list item click id:" + String.valueOf((Integer) v.getTag()));
+						ListMenuHandler.this.postMsg(MSG.MENU_SELECTED, (Integer) v.getTag(), 0, null);
+						break;
 					}
 				}
 				return true;

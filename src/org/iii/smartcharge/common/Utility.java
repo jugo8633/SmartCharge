@@ -15,8 +15,13 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.apache.http.protocol.HTTP;
+import org.iii.smartcharge.module.Base64;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -30,62 +35,50 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.widget.ImageView;
+import android.widget.TextView;
 
-public abstract class Utility
-{
+public abstract class Utility {
 
-	static class ImageFromUrl extends AsyncTask<String, Integer, Bitmap>
-	{
-		ImageView	imgView	= null;
-		String		strURL	= null;
+	static class ImageFromUrl extends AsyncTask<String, Integer, Bitmap> {
+		ImageView imgView = null;
+		String strURL = null;
 
-		public ImageFromUrl(ImageView imageView)
-		{
+		public ImageFromUrl(ImageView imageView) {
 			imgView = imageView;
 		}
 
-		protected Bitmap doInBackground(String... strUrl)
-		{
+		protected Bitmap doInBackground(String... strUrl) {
 			strURL = strUrl[0];
 			Bitmap bitmap = null;
-			try
-			{
+			try {
 				URL url = new URL(strURL);
 				URLConnection conn = url.openConnection();
 				HttpURLConnection httpConn = (HttpURLConnection) conn;
 				httpConn.setRequestMethod("GET");
 				httpConn.connect();
 
-				if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK)
-				{
+				if (httpConn.getResponseCode() == HttpURLConnection.HTTP_OK) {
 					InputStream inputStream = httpConn.getInputStream();
 					bitmap = BitmapFactory.decodeStream(inputStream);
 					inputStream.close();
 				}
-			}
-			catch (MalformedURLException e1)
-			{
+			} catch (MalformedURLException e1) {
 				e1.printStackTrace();
-			}
-			catch (IOException e)
-			{
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 
 			return bitmap;
 		}
 
-		protected void onPostExecute(Bitmap bitmap)
-		{
-			if (null != bitmap && null != imgView)
-			{
+		protected void onPostExecute(Bitmap bitmap) {
+			if (null != bitmap && null != imgView) {
 				imgView.setImageBitmap(bitmap);
 			}
 		}
 	}
 
-	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float roundPx)
-	{
+	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap, float roundPx) {
 		Bitmap output = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Config.ARGB_8888);
 		Canvas canvas = new Canvas(output);
 		final int color = 0xff424242;
@@ -101,30 +94,25 @@ public abstract class Utility
 		return output;
 	}
 
-	public static boolean isValidStr(String strStr)
-	{
+	public static boolean isValidStr(String strStr) {
 		if (null != strStr && 0 < strStr.trim().length())
 			return true;
 		return false;
 	}
 
-	public static String convertNull(String strStr)
-	{
+	public static String convertNull(String strStr) {
 		String strValue = strStr;
-		if (null == strValue)
-		{
+		if (null == strValue) {
 			strValue = "";
 		}
 		return strValue;
 	}
 
 	/** convert null string to default string **/
-	public static String convertNull(String strStr, String strDefault)
-	{
+	public static String convertNull(String strStr, String strDefault) {
 		String strValue = strStr;
 
-		if (!isValidStr(strStr))
-		{
+		if (!isValidStr(strStr)) {
 			strValue = strDefault;
 		}
 
@@ -132,71 +120,75 @@ public abstract class Utility
 	}
 
 	/** Check String is numeric data type **/
-	public static boolean isNumeric(String str)
-	{
+	public static boolean isNumeric(String str) {
 		if (!isValidStr(str))
 			return false;
 		return str.matches("[-+]?\\d*\\.?\\d+");
 	}
 
-	public static String UrlEncode(final String strText)
-	{
-		try
-		{
+	public static String UrlEncode(final String strText) {
+		try {
 			return URLEncoder.encode(convertNull(strText), HTTP.UTF_8);
-		}
-		catch (UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public static boolean checkInternet(Context conetxt)
-	{
+	public static boolean checkInternet(Context conetxt) {
 		boolean bValid = true;
 		ConnectivityManager conManager = (ConnectivityManager) conetxt.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo networInfo = conManager.getActiveNetworkInfo();
 
-		if (null == networInfo || !networInfo.isAvailable())
-		{
+		if (null == networInfo || !networInfo.isAvailable()) {
 			bValid = false;
 		}
 
 		return bValid;
 	}
 
-	public static String getTime()
-	{
+	public static String getTime() {
 		SimpleDateFormat formatter = null;
 		formatter = new SimpleDateFormat("yyyyMMdd HH:mm:ss", Locale.getDefault());
 		Date curDate = new Date(System.currentTimeMillis());
 		return formatter.format(curDate);
 	}
 
-	public static String md5(String string)
-	{
+	public static String md5(String string) {
 		byte[] hash;
-		try
-		{
+		try {
 			hash = MessageDigest.getInstance("MD5").digest(string.getBytes("UTF-8"));
-		}
-		catch (NoSuchAlgorithmException e)
-		{
+		} catch (NoSuchAlgorithmException e) {
 			throw new RuntimeException("Huh, MD5 should be supported?", e);
-		}
-		catch (UnsupportedEncodingException e)
-		{
+		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("Huh, UTF-8 should be supported?", e);
 		}
 
 		StringBuilder hex = new StringBuilder(hash.length * 2);
-		for (byte b : hash)
-		{
+		for (byte b : hash) {
 			if ((b & 0xFF) < 0x10)
 				hex.append("0");
 			hex.append(Integer.toHexString(b & 0xFF));
 		}
 		return hex.toString();
 	}
+
+	public static String getHashKey(Context context) {
+		try {
+			PackageInfo info = context.getPackageManager().getPackageInfo("org.iii.smartcharge", PackageManager.GET_SIGNATURES);
+			for (Signature signature : info.signatures) {
+				MessageDigest md = MessageDigest.getInstance("SHA");
+				md.update(signature.toByteArray());
+
+				return Base64.encodeBytes(md.digest());
+
+			}
+		} catch (NameNotFoundException e) {
+
+		} catch (NoSuchAlgorithmException e) {
+
+		}
+		return null;
+	}
+
 }

@@ -8,6 +8,7 @@ import org.iii.smartcharge.common.Common;
 import org.iii.smartcharge.common.Global;
 import org.iii.smartcharge.common.Logs;
 import org.iii.smartcharge.common.MSG;
+import org.iii.smartcharge.common.Utility;
 import org.iii.smartcharge.handler.ActionbarHandler;
 import org.iii.smartcharge.handler.DrawerMenuHandler;
 import org.iii.smartcharge.handler.ListMenuHandler;
@@ -56,6 +57,8 @@ public class MainActivity extends Activity
 
 		filterCharge = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
 
+		String strHashKey = Utility.getHashKey(this);
+		Logs.showTrace("Hash Key: " + strHashKey);
 	}
 
 	@Override
@@ -75,8 +78,23 @@ public class MainActivity extends Activity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		super.onActivityResult(requestCode, resultCode, data);
+		if (QrScanerActivity.ACTIVITY_REQUEST_CODE == requestCode)
+		{
+			if (resultCode == RESULT_OK)
+			{
+				Bundle bundle = data.getExtras();
+				String scanResult = bundle.getString("barcode");
+				String scanResult2 = bundle.getString("barcode2");
+
+				Logs.showTrace("QR Code:" + scanResult);
+				Logs.showTrace("QR Code2:" + scanResult2);
+
+			}
+		}
+
 		FacebookHandler.callbackManager.onActivityResult(requestCode, resultCode, data);
+		super.onActivityResult(requestCode, resultCode, data);
+
 	}
 
 	private void showStartUp()
@@ -133,8 +151,20 @@ public class MainActivity extends Activity
 		startActivityForResult(openCameraIntent, QrScanerActivity.ACTIVITY_REQUEST_CODE);
 	}
 
-	private void switchPage(final int nPage)
+	private void showLayout(final int nLayout)
 	{
+		switch (nLayout)
+		{
+		case ListMenuHandler.ITEM_CHARGE:
+			showQrScanner();
+			break;
+		case ListMenuHandler.ITEM_SELECT_STATION:
+			break;
+		case ListMenuHandler.ITEM_LOCATION_STATION:
+			break;
+		case ListMenuHandler.ITEM_COPY_RIGHT:
+			break;
+		}
 		/*
 		 * if (missionHandler.isShowMissionEnter()) {
 		 * missionHandler.closeMissionEnter(); }
@@ -224,7 +254,7 @@ public class MainActivity extends Activity
 		boolean bCharging = nIsCharge == MSG.CHARGING ? true : false;
 		if (bCharging)
 		{
-			switch(nChargeType)
+			switch (nChargeType)
 			{
 			case MSG.CHARGE_USB:
 				strState = String.format(Locale.CHINESE, "%d%% - 充電中(USB)", mnBatteryLevel);
@@ -251,7 +281,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch(v.getId())
+			switch (v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				showFacebookLogin();
@@ -285,7 +315,7 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch(msg.what)
+			switch (msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();
@@ -303,7 +333,7 @@ public class MainActivity extends Activity
 				actionbarHandler.setMenuState(false);
 				break;
 			case MSG.MENU_SELECTED:
-				switchPage(msg.arg1);
+				showLayout(msg.arg1);
 				break;
 			case MSG.CHARGE_STATE:
 				setChargeState(msg.arg1, msg.arg2);
