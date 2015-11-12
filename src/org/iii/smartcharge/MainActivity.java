@@ -84,11 +84,7 @@ public class MainActivity extends Activity
 			{
 				Bundle bundle = data.getExtras();
 				String scanResult = bundle.getString("barcode");
-				String scanResult2 = bundle.getString("barcode2");
-
 				Logs.showTrace("QR Code:" + scanResult);
-				Logs.showTrace("QR Code2:" + scanResult2);
-
 			}
 		}
 
