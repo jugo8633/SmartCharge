@@ -10,11 +10,14 @@ import org.iii.smartcharge.common.Logs;
 import org.iii.smartcharge.common.MSG;
 import org.iii.smartcharge.common.Utility;
 import org.iii.smartcharge.handler.ActionbarHandler;
+import org.iii.smartcharge.handler.DialogHandler;
 import org.iii.smartcharge.handler.DrawerMenuHandler;
+import org.iii.smartcharge.handler.FlipperHandler;
 import org.iii.smartcharge.handler.ListMenuHandler;
+import org.iii.smartcharge.handler.PowerSwitchHandler;
+import org.iii.smartcharge.module.CmpHandler;
 import org.iii.smartcharge.module.FacebookHandler;
 import org.iii.smartcharge.view.GaugeView;
-
 import com.facebook.appevents.AppEventsLogger;
 
 import android.app.Activity;
@@ -38,7 +41,6 @@ public class MainActivity extends Activity
 	private final int			LAYOUT_MAIN			= 2;
 	private final int			LAYOUT_LOGIN		= 1;
 	private Intent				batteryStatus		= null;
-	private TextView			tvNotify			= null;
 	private TextView			tvBatteryState		= null;
 	private boolean				mbCharging			= false;
 	private IntentFilter		filterCharge		= null;
@@ -46,6 +48,9 @@ public class MainActivity extends Activity
 	private TextView			btnFacebook			= null;
 	private TextView			btnSkip				= null;
 	private FacebookHandler		facebook			= null;
+	private CmpHandler			cmpHandler			= null;
+	private PowerSwitchHandler	powerSwitchHandler	= null;
+	private FlipperHandler		flipperHandler		= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -59,6 +64,8 @@ public class MainActivity extends Activity
 
 		String strHashKey = Utility.getHashKey(this);
 		Logs.showTrace("Hash Key: " + strHashKey);
+
+		cmpHandler = new CmpHandler();
 	}
 
 	@Override
@@ -84,6 +91,10 @@ public class MainActivity extends Activity
 			{
 				Bundle bundle = data.getExtras();
 				String scanResult = bundle.getString("barcode");
+				if (Utility.isValidStr(scanResult))
+				{
+					Common.postMessage(selfHandler, MSG.QR_CODE, 0, 0, scanResult);
+				}
 				Logs.showTrace("QR Code:" + scanResult);
 			}
 		}
@@ -130,7 +141,6 @@ public class MainActivity extends Activity
 		powerGauge.setAmount(-90);
 		this.getActionBar().show();
 
-		tvNotify = (TextView) findViewById(R.id.textViewChargeNotify);
 		tvBatteryState = (TextView) findViewById(R.id.textViewBatteryState);
 
 		if (null == chkChargeTimer)
@@ -139,17 +149,30 @@ public class MainActivity extends Activity
 			setChargeTimerTask();
 		}
 
+		flipperHandler = new FlipperHandler(this, selfHandler);
+		if (flipperHandler.init())
+		{
+			powerSwitchHandler = new PowerSwitchHandler(this, selfHandler);
+			powerSwitchHandler.init(flipperHandler.getView(FlipperHandler.VIEW_ID_POWER_SWITCH));
+
+		}
+
 	}
 
 	private void showQrScanner()
 	{
+		if (!Utility.checkInternet(MainActivity.this))
+		{
+			DialogHandler.showNetworkError(MainActivity.this, false);
+			return;
+		}
 		Intent openCameraIntent = new Intent(MainActivity.this, QrScanerActivity.class);
 		startActivityForResult(openCameraIntent, QrScanerActivity.ACTIVITY_REQUEST_CODE);
 	}
 
 	private void showLayout(final int nLayout)
 	{
-		switch (nLayout)
+		switch(nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -157,36 +180,12 @@ public class MainActivity extends Activity
 		case ListMenuHandler.ITEM_SELECT_STATION:
 			break;
 		case ListMenuHandler.ITEM_LOCATION_STATION:
+			showStationLocation();
 			break;
 		case ListMenuHandler.ITEM_COPY_RIGHT:
+			showAbout();
 			break;
 		}
-		/*
-		 * if (missionHandler.isShowMissionEnter()) {
-		 * missionHandler.closeMissionEnter(); }
-		 * 
-		 * flipperHandler.close(); actionbarHandler.showBackBtn(false);
-		 * 
-		 * drawerMenu.switchDisplay();
-		 * 
-		 * switch (nPage) { case ListMenuHandler.PAGE_GIFT:
-		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_GIFT);
-		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "Gift Page", "兌獎", "Draw Menu"); break; case
-		 * ListMenuHandler.PAGE_STORE:
-		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_FIELD);
-		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "Field Page", "合作商店", "Draw Menu"); break; case
-		 * ListMenuHandler.PAGE_ACCOUNT:
-		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_ACCOUNT);
-		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "Account Page", "帳戶", "Draw Menu"); break; case
-		 * ListMenuHandler.PAGE_SUPPORT: break; case
-		 * ListMenuHandler.PAGE_ABOUNT:
-		 * viewPagerHandler.showPage(ViewPagerHandler.PAGE_ABOUT);
-		 * Global.theApplication.submitLog(AppSensor.TYPE_VIEW, null, null,
-		 * "About Page", "關於", "Draw Menu"); break; }
-		 */
 	}
 
 	private void setChargeTimerTask()
@@ -250,7 +249,7 @@ public class MainActivity extends Activity
 		boolean bCharging = nIsCharge == MSG.CHARGING ? true : false;
 		if (bCharging)
 		{
-			switch (nChargeType)
+			switch(nChargeType)
 			{
 			case MSG.CHARGE_USB:
 				strState = String.format(Locale.CHINESE, "%d%% - 充電中(USB)", mnBatteryLevel);
@@ -277,10 +276,17 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch (v.getId())
+			switch(v.getId())
 			{
 			case R.id.textViewLoginFacebook:
-				showFacebookLogin();
+				if (Utility.checkInternet(MainActivity.this))
+				{
+					showFacebookLogin();
+				}
+				else
+				{
+					DialogHandler.showNetworkError(MainActivity.this, false);
+				}
 				break;
 			case R.id.textViewLoginSkip:
 				showMainLayout();
@@ -306,12 +312,35 @@ public class MainActivity extends Activity
 		facebook.login();
 	}
 
+	private void powerPortSet(String strController, String strWire, String strPort, String strState)
+	{
+		cmpHandler.powerPortSet(strController, strWire, strPort, strState);
+	}
+
+	private void showPowerSwitch()
+	{
+		flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_SWITCH);
+		actionbarHandler.showBackBtn(true);
+	}
+
+	private void showStationLocation()
+	{
+		flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_MAP);
+		actionbarHandler.showBackBtn(true);
+	}
+
+	private void showAbout()
+	{
+		flipperHandler.showView(FlipperHandler.VIEW_ID_COPY_RIGHT);
+		actionbarHandler.showBackBtn(true);
+	}
+
 	private Handler selfHandler = new Handler()
 	{
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch (msg.what)
+			switch(msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();
@@ -322,6 +351,10 @@ public class MainActivity extends Activity
 			case MSG.MENU_CLICK:
 				drawerMenu.switchDisplay();
 				break;
+			case MSG.BACK_CLICK:
+				flipperHandler.close();
+				actionbarHandler.showBackBtn(false);
+				break;
 			case MSG.DRAWER_OPEN:
 				actionbarHandler.setMenuState(true);
 				break;
@@ -329,10 +362,18 @@ public class MainActivity extends Activity
 				actionbarHandler.setMenuState(false);
 				break;
 			case MSG.MENU_SELECTED:
+				drawerMenu.switchDisplay();
 				showLayout(msg.arg1);
 				break;
 			case MSG.CHARGE_STATE:
 				setChargeState(msg.arg1, msg.arg2);
+				break;
+			case MSG.QR_CODE:
+				showPowerSwitch();
+				// powerPortSet((String) msg.obj, "1", "2", "1");
+				break;
+			case MSG.FINISH:
+				MainActivity.this.finish();
 				break;
 			}
 		}

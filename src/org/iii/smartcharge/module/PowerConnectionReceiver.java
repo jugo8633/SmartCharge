@@ -1,10 +1,6 @@
 package org.iii.smartcharge.module;
 
-import org.iii.smartcharge.common.Common;
-import org.iii.smartcharge.common.Global;
 import org.iii.smartcharge.common.Logs;
-import org.iii.smartcharge.common.MSG;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -15,7 +11,7 @@ public class PowerConnectionReceiver extends BroadcastReceiver
 
 	public PowerConnectionReceiver()
 	{
-		// TODO Auto-generated constructor stub
+
 	}
 
 	@Override
@@ -32,22 +28,26 @@ public class PowerConnectionReceiver extends BroadcastReceiver
 			boolean acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
 			if (usbCharge)
 			{
-		//		Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE, MSG.CHARGING, MSG.CHARGE_USB, null);
+				// Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE,
+				// MSG.CHARGING, MSG.CHARGE_USB, null);
 				Logs.showTrace("Battery Charging Use USB");
 			}
 			else if (acCharge)
 			{
-		//		Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE, MSG.CHARGING, MSG.CHARGE_AC, null);
+				// Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE,
+				// MSG.CHARGING, MSG.CHARGE_AC, null);
 				Logs.showTrace("Battery Charging Use AC");
 			}
 			else
 			{
-		//		Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE, MSG.CHARGING, 0, null);
+				// Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE,
+				// MSG.CHARGING, 0, null);
 			}
 		}
 		else
 		{
-		//	Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE, MSG.CHARGING_NOT, 0, null);
+			// Common.postMessage(Global.mainHandler, MSG.CHARGE_STATE,
+			// MSG.CHARGING_NOT, 0, null);
 			Logs.showTrace("Battery Not Charging");
 		}
 	}

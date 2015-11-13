@@ -16,5 +16,8 @@ public abstract class MSG
 	public static final int	CHARGING_NOT	= ID + 9;
 	public static final int	CHARGE_USB		= ID + 10;
 	public static final int	CHARGE_AC		= ID + 11;
+	public static final int	QR_CODE			= ID + 12;
+	public static final int	FINISH			= ID + 13;
+	public static final int	DIALOG_CLICKED	= ID + 14;
 
 }

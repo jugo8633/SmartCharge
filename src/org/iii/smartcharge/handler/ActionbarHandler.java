@@ -6,11 +6,9 @@ import org.iii.smartcharge.common.MSG;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.os.Handler;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,7 +16,7 @@ public class ActionbarHandler extends BaseHandler
 {
 	private ImageView	listMenuBtn	= null;
 	private TextView	tvPoint		= null;
-	private ImageButton	ibtnBack	= null;
+	private ImageView	ibtnBack	= null;
 
 	public ActionbarHandler(Activity activity, Handler handler)
 	{
@@ -40,7 +38,7 @@ public class ActionbarHandler extends BaseHandler
 			listMenuBtn.setOnClickListener(buttonClick);
 		}
 
-		ibtnBack = (ImageButton) theActivity.findViewById(R.id.imageButtonActionbarBack);
+		ibtnBack = (ImageView) theActivity.findViewById(R.id.imageViewActionbarBack);
 		if (null != ibtnBack)
 		{
 			ibtnBack.setOnClickListener(buttonClick);
@@ -97,7 +95,7 @@ public class ActionbarHandler extends BaseHandler
 			postMsg(MSG.MENU_CLICK, 0, 0, null);
 		}
 
-		if (view.getId() == R.id.imageButtonActionbarBack)
+		if (view.getId() == R.id.imageViewActionbarBack)
 		{
 			postMsg(MSG.BACK_CLICK, 0, 0, null);
 		}
@@ -114,7 +112,7 @@ public class ActionbarHandler extends BaseHandler
 		}
 		else
 		{
-			listMenuBtn.setImageResource(R.drawable.act_br_menu);
+			listMenuBtn.setImageResource(R.drawable.btn_menu);
 		}
 	}
 

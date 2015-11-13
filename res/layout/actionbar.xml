@@ -11,8 +11,8 @@
 
         <ImageView
             android:id="@+id/imageViewMenu"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
@@ -20,6 +20,9 @@
             android:layout_marginStart="13dp"
             android:background="#00000000"
             android:contentDescription="@string/content_description"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:scaleType="centerInside"
             android:src="@drawable/btn_menu" />
 
         <TextView
@@ -34,28 +37,21 @@
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/imageButtonActionbarBack"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <ImageView
+            android:id="@+id/imageViewActionbarBack"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="15dp"
             android:layout_marginRight="15dp"
             android:contentDescription="@string/content_description"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:scaleType="centerInside"
             android:src="@drawable/btn_back"
             android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/imageViewActionbarIcon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_centerInParent="true"
-            android:layout_toLeftOf="@+id/TextViewPoint"
-            android:layout_toStartOf="@+id/TextViewPoint"
-            android:contentDescription="@string/content_description"
-            android:src="@drawable/icon" />
     </RelativeLayout>
 
 </LinearLayout>

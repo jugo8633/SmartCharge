@@ -35,7 +35,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 public abstract class Utility {
 

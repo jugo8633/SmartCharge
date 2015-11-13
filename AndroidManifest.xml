@@ -65,7 +65,11 @@
         </activity>
 
         <!-- QR Code Scanner Activity -->
-        <activity android:name="org.iii.smartcharge.QrScanerActivity" >
+        <activity
+            android:name="org.iii.smartcharge.QrScanerActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
 
         <receiver android:name="org.iii.smartcharge.module.PowerConnectionReceiver" >

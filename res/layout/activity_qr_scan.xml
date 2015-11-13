@@ -12,7 +12,7 @@
     <ImageView
         android:id="@+id/top_mask"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:layout_alignParentTop="true"
         android:background="@drawable/scan_mask"
         android:contentDescription="@string/app_name" />
@@ -70,5 +70,45 @@
         android:layout_toRightOf="@id/capture_crop_layout"
         android:background="@drawable/scan_mask"
         android:contentDescription="@string/content_description" />
+
+    <TextView
+        android:id="@+id/textViewQrCodeMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/bottom_mask"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:text="@string/qr_message"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="@android:color/white" />
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutQrTitlebar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/list_item_option" >
+
+        <ImageView
+            android:id="@+id/imageViewQrCodeIcon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/icon" />
+
+        <TextView
+            android:id="@+id/textViewQrCodeTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@+id/imageViewQrCodeIcon"
+            android:text="@string/app_name"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white" />
+
+    </RelativeLayout>
 
 </RelativeLayout>
