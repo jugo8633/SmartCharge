@@ -85,6 +85,7 @@ public class MainActivity extends Activity
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		Logs.showTrace("onActivityResult:" + String.valueOf(requestCode) + " " + String.valueOf(resultCode));
 		if (QrScanerActivity.ACTIVITY_REQUEST_CODE == requestCode)
 		{
 			if (resultCode == RESULT_OK)
@@ -172,7 +173,7 @@ public class MainActivity extends Activity
 
 	private void showLayout(final int nLayout)
 	{
-		switch(nLayout)
+		switch (nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -249,7 +250,7 @@ public class MainActivity extends Activity
 		boolean bCharging = nIsCharge == MSG.CHARGING ? true : false;
 		if (bCharging)
 		{
-			switch(nChargeType)
+			switch (nChargeType)
 			{
 			case MSG.CHARGE_USB:
 				strState = String.format(Locale.CHINESE, "%d%% - 充電中(USB)", mnBatteryLevel);
@@ -276,7 +277,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch(v.getId())
+			switch (v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				if (Utility.checkInternet(MainActivity.this))
@@ -340,7 +341,7 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch(msg.what)
+			switch (msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();
