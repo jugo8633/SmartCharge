@@ -15,6 +15,8 @@ import org.iii.smartcharge.handler.DrawerMenuHandler;
 import org.iii.smartcharge.handler.FlipperHandler;
 import org.iii.smartcharge.handler.ListMenuHandler;
 import org.iii.smartcharge.handler.PowerSwitchHandler;
+import org.iii.smartcharge.module.Battery;
+import org.iii.smartcharge.module.Battery.BatteryState;
 import org.iii.smartcharge.module.CmpHandler;
 import org.iii.smartcharge.module.FacebookHandler;
 import org.iii.smartcharge.view.GaugeView;
@@ -22,35 +24,36 @@ import com.facebook.appevents.AppEventsLogger;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity
 {
-	private ActionbarHandler	actionbarHandler	= null;
-	private DrawerMenuHandler	drawerMenu			= null;
-	private ListMenuHandler		listMenuHandler		= null;
-	private GaugeView			powerGauge			= null;
-	private Timer				chkChargeTimer		= null;
-	private final int			LAYOUT_MAIN			= 2;
-	private final int			LAYOUT_LOGIN		= 1;
-	private Intent				batteryStatus		= null;
-	private TextView			tvBatteryState		= null;
-	private boolean				mbCharging			= false;
-	private IntentFilter		filterCharge		= null;
-	private int					mnBatteryLevel		= 0;
-	private TextView			btnFacebook			= null;
-	private TextView			btnSkip				= null;
-	private FacebookHandler		facebook			= null;
-	private CmpHandler			cmpHandler			= null;
-	private PowerSwitchHandler	powerSwitchHandler	= null;
-	private FlipperHandler		flipperHandler		= null;
+	private ActionbarHandler	actionbarHandler		= null;
+	private DrawerMenuHandler	drawerMenu				= null;
+	private ListMenuHandler		listMenuHandler			= null;
+	private GaugeView			powerGauge				= null;
+	private Timer				chkChargeTimer			= null;
+	private final int			LAYOUT_MAIN				= 2;
+	private final int			LAYOUT_LOGIN			= 1;
+	private TextView			tvBatteryState			= null;
+	private TextView			btnFacebook				= null;
+	private TextView			btnSkip					= null;
+	private FacebookHandler		facebook				= null;
+	private CmpHandler			cmpHandler				= null;
+	private PowerSwitchHandler	powerSwitchHandler		= null;
+	private FlipperHandler		flipperHandler			= null;
+	private static Battery		battery					= null;
+	private static BatteryState	batteryState			= null;
+	private final int			BATTERY_STATE_BATTERY	= 0;
+	private final int			BATTERY_STATE_AC		= 1;
+	private final int			BATTERY_STATE_USB		= 2;
+	private final int			BATTERY_STATE_WARNING	= 3;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -60,7 +63,8 @@ public class MainActivity extends Activity
 		this.getActionBar().hide();
 		showStartUp();
 
-		filterCharge = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+		battery = new Battery();
+		batteryState = new Battery.BatteryState();
 
 		String strHashKey = Utility.getHashKey(this);
 		Logs.showTrace("Hash Key: " + strHashKey);
@@ -173,7 +177,7 @@ public class MainActivity extends Activity
 
 	private void showLayout(final int nLayout)
 	{
-		switch (nLayout)
+		switch(nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -196,80 +200,88 @@ public class MainActivity extends Activity
 			@Override
 			public void run()
 			{
-				batteryStatus = registerReceiver(null, filterCharge);
+				battery.analysis(MainActivity.this, batteryState);
 
-				/** Get Battery State **/
-				int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-				int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-				int state = (int) ((level / (float) scale) * 100);
-
-				/** Get Charge State **/
-				int status = batteryStatus.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
-				boolean isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING
-						|| status == BatteryManager.BATTERY_STATUS_FULL;
-
-				if (mbCharging != isCharging || mnBatteryLevel != state)
+				if (batteryState.bChanged)
 				{
-					mbCharging = isCharging;
-					mnBatteryLevel = state;
-					Logs.showTrace("Battery level:" + String.valueOf(mnBatteryLevel));
-
-					if (mbCharging)
-					{
-						int chargePlug = batteryStatus.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-						boolean usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB;
-						boolean acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC;
-						if (usbCharge)
-						{
-							Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING, MSG.CHARGE_USB, null);
-						}
-						else if (acCharge)
-						{
-							Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING, MSG.CHARGE_AC, null);
-						}
-						else
-						{
-							Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING, 0, null);
-						}
-					}
-					else
-					{
-						Common.postMessage(selfHandler, MSG.CHARGE_STATE, MSG.CHARGING_NOT, 0, null);
-					}
+					Common.postMessage(selfHandler, MSG.CHARGE_STATE, 0, 0, null);
 				}
-
 			}
 		}, 500, 1000);
 	}
 
-	private void setChargeState(int nIsCharge, int nChargeType)
+	private void setChargeState()
 	{
 		if (null == tvBatteryState)
 			return;
-		String strState = null;
-		boolean bCharging = nIsCharge == MSG.CHARGING ? true : false;
-		if (bCharging)
+		String strState = String.format(Locale.CHINESE, "%d%%", batteryState.nLevel);
+
+		if (batteryState.bCharging)
 		{
-			switch (nChargeType)
+			if (batteryState.bUsbCharge)
 			{
-			case MSG.CHARGE_USB:
-				strState = String.format(Locale.CHINESE, "%d%% - 充電中(USB)", mnBatteryLevel);
-				break;
-			case MSG.CHARGE_AC:
-				strState = String.format(Locale.CHINESE, "%d%% - 充電中(AC)", mnBatteryLevel);
-				break;
-			default:
-				strState = String.format(Locale.CHINESE, "%d%% - 充電中", mnBatteryLevel);
-				break;
+				setBatteryState(BATTERY_STATE_USB);
+			}
+			else if (batteryState.bAcCharge)
+			{
+				setBatteryState(BATTERY_STATE_AC);
+			}
+			else
+			{
+				setBatteryState(BATTERY_STATE_BATTERY);
 			}
 		}
 		else
 		{
-			strState = String.format(Locale.CHINESE, "%d%% - 非充電中", mnBatteryLevel);
+			setBatteryState(BATTERY_STATE_BATTERY);
 		}
+
 		tvBatteryState.setText(strState);
-		int nDegress = (int) ((mnBatteryLevel * 1.8) - 90);
+		int nDegress = (int) ((0 - (batteryState.nLevel * 1.8)) + 90);
 		powerGauge.setAmount(nDegress);
+	}
+
+	private void setBatteryState(int nState)
+	{
+		ImageView ivPic = null;
+
+		ivPic = (ImageView) findViewById(R.id.imageViewBSBattery);
+		if (nState == BATTERY_STATE_BATTERY)
+			ivPic.setImageResource(R.drawable.ic_battery_80_white_48dp);
+		else
+			ivPic.setImageResource(R.drawable.ic_battery_80_black_48dp);
+
+		ivPic = (ImageView) findViewById(R.id.imageViewBSPowerAC);
+		if (nState == BATTERY_STATE_AC)
+			ivPic.setImageResource(R.drawable.ic_power_white_48dp);
+		else
+			ivPic.setImageResource(R.drawable.ic_power_black_48dp);
+
+		ivPic = (ImageView) findViewById(R.id.imageViewBSUsb);
+		if (nState == BATTERY_STATE_USB)
+			ivPic.setImageResource(R.drawable.ic_usb_white_48dp);
+		else
+			ivPic.setImageResource(R.drawable.ic_usb_black_48dp);
+
+		ivPic = (ImageView) findViewById(R.id.imageViewBSWarning);
+		if (nState == BATTERY_STATE_WARNING)
+			ivPic.setImageResource(R.drawable.ic_warning_white_48dp);
+		else
+			ivPic.setImageResource(R.drawable.ic_warning_black_48dp);
+
+		TextView tvBattery = null;
+
+		/** Battery Temperature **/
+		tvBattery = (TextView) findViewById(R.id.textViewBatteryTemperature);
+		tvBattery.setText(String.valueOf(batteryState.fTemperature) + "℃");
+
+		/** Battery Health **/
+		tvBattery = (TextView) findViewById(R.id.textViewBatteryHealth);
+		tvBattery.setText(batteryState.strHealth);
+
+		/** Battery Voltage **/
+		tvBattery = (TextView) findViewById(R.id.textViewBatteryVoltage);
+		tvBattery.setText(String.valueOf(batteryState.nVoltage) + "mV");
 	}
 
 	private OnClickListener itemClickListener = new OnClickListener()
@@ -277,7 +289,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch (v.getId())
+			switch(v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				if (Utility.checkInternet(MainActivity.this))
@@ -341,7 +353,7 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch (msg.what)
+			switch(msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();
@@ -367,7 +379,7 @@ public class MainActivity extends Activity
 				showLayout(msg.arg1);
 				break;
 			case MSG.CHARGE_STATE:
-				setChargeState(msg.arg1, msg.arg2);
+				setChargeState();
 				break;
 			case MSG.QR_CODE:
 				showPowerSwitch();

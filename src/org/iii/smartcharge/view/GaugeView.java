@@ -40,7 +40,7 @@ public class GaugeView extends RelativeLayout
 		ivPointer = new ImageView(context);
 		ivPointer.setScaleType(ScaleType.FIT_XY);
 		ivPointer.setAdjustViewBounds(false);
-		ivPointer.setBackgroundColor(Color.argb(155, 0, 255, 0));
+		ivPointer.setBackgroundColor(Color.argb(155, 61, 68, 80));
 		RelativeLayout.LayoutParams ivPointerlayoutParams = new RelativeLayout.LayoutParams(15,
 				LayoutParams.MATCH_PARENT);
 		ivPointerlayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);

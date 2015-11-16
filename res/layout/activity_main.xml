@@ -20,17 +20,56 @@
                 android:id="@+id/linearLayoutContent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:orientation="vertical" >
 
-                <TextView
-                    android:id="@+id/textViewChargeNotify"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                <LinearLayout
+                    android:id="@+id/linearLayoutStateBar"
+                    android:layout_width="200dp"
+                    android:layout_height="40dp"
                     android:layout_marginTop="30dp"
-                    android:text="@string/must_charge"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/white" />
+                    android:background="@drawable/bg_right_item"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <ImageView
+                        android:id="@+id/imageViewBSBattery"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:contentDescription="@string/content_description"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_battery_std_black_48dp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewBSPowerAC"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:contentDescription="@string/content_description"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_power_black_48dp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewBSUsb"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:contentDescription="@string/content_description"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_usb_black_48dp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewBSWarning"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:contentDescription="@string/content_description"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/ic_warning_black_48dp" />
+                </LinearLayout>
 
                 <org.iii.smartcharge.view.GaugeView
                     android:id="@+id/gaugeViewPower"
@@ -38,26 +77,154 @@
                     android:layout_height="300dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
-                    android:layout_marginTop="30dp" >
+                    android:layout_marginTop="50dp" >
                 </org.iii.smartcharge.view.GaugeView>
 
-                <LinearLayout
-                    android:id="@+id/linearLayoutBatteryState"
+                <TextView
+                    android:id="@+id/textViewBatteryState"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="top|center_horizontal"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@android:color/white"
+                    android:textSize="54sp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:gravity="center_horizontal"
-                    android:orientation="horizontal" >
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/bg_battery_state" >
+
+                    <ImageView
+                        android:id="@+id/imageViewBatteryTemperature"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:contentDescription="@string/content_description"
+                        android:padding="5dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/btn_charge" />
 
                     <TextView
-                        android:id="@+id/textViewBatteryState"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:id="@+id/textViewBatteryTemperatureTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_toEndOf="@+id/imageViewBatteryTemperature"
+                        android:layout_toRightOf="@+id/imageViewBatteryTemperature"
+                        android:text="@string/temperature"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/Gray_Word" />
+
+                    <TextView
+                        android:id="@+id/textViewBatteryTemperature"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginRight="24dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
                         android:textColor="@android:color/white" />
-                </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/bg_battery_state" >
+
+                    <ImageView
+                        android:id="@+id/imageViewBatteryHealth"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:contentDescription="@string/content_description"
+                        android:padding="5dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/btn_charge" />
+
+                    <TextView
+                        android:id="@+id/textViewBatteryHealthTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_toEndOf="@+id/imageViewBatteryHealth"
+                        android:layout_toRightOf="@+id/imageViewBatteryHealth"
+                        android:text="@string/health"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/Gray_Word" />
+
+                    <TextView
+                        android:id="@+id/textViewBatteryHealth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginRight="24dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/white" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/bg_battery_state" >
+
+                    <ImageView
+                        android:id="@+id/imageViewGoCharge"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginStart="15dp"
+                        android:contentDescription="@string/content_description"
+                        android:padding="5dp"
+                        android:scaleType="centerInside"
+                        android:src="@drawable/btn_charge" />
+
+                    <TextView
+                        android:id="@+id/textViewBatteryVoltageTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="24dp"
+                        android:layout_marginStart="24dp"
+                        android:layout_toEndOf="@+id/imageViewGoCharge"
+                        android:layout_toRightOf="@+id/imageViewGoCharge"
+                        android:text="@string/voltage"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@color/Gray_Word" />
+
+                    <TextView
+                        android:id="@+id/textViewBatteryVoltage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="24dp"
+                        android:layout_marginRight="24dp"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:textColor="@android:color/white" />
+                </RelativeLayout>
             </LinearLayout>
 
             <org.iii.smartcharge.view.FlipperView
