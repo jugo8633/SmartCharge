@@ -155,12 +155,12 @@ public class QrScanerActivity extends Activity
 
 		if (null != result)
 		{
-			Logs.showError("QR Code Decode Success");
+			Logs.showTrace("QR Code Decode Success");
 			returnCode(result);
 		}
 		else
 		{
-			Logs.showError("QR Code Decode Fail");
+			Logs.showTrace("QR Code Decode Fail");
 		}
 
 		zbar = null;
