@@ -73,8 +73,8 @@
 
                 <org.iii.smartcharge.view.GaugeView
                     android:id="@+id/gaugeViewPower"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_width="400dp"
+                    android:layout_height="200dp"
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="50dp" >
@@ -94,124 +94,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_weight="0.10"
                     android:background="@drawable/bg_battery_state" >
-
-                    <ImageView
-                        android:id="@+id/imageViewBatteryTemperature"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginStart="15dp"
-                        android:contentDescription="@string/content_description"
-                        android:padding="5dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/btn_charge" />
-
-                    <TextView
-                        android:id="@+id/textViewBatteryTemperatureTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginStart="24dp"
-                        android:layout_toEndOf="@+id/imageViewBatteryTemperature"
-                        android:layout_toRightOf="@+id/imageViewBatteryTemperature"
-                        android:text="@string/temperature"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/Gray_Word" />
-
-                    <TextView
-                        android:id="@+id/textViewBatteryTemperature"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="24dp"
-                        android:layout_marginRight="24dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/white" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/bg_battery_state" >
-
-                    <ImageView
-                        android:id="@+id/imageViewBatteryHealth"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginStart="15dp"
-                        android:contentDescription="@string/content_description"
-                        android:padding="5dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/btn_charge" />
-
-                    <TextView
-                        android:id="@+id/textViewBatteryHealthTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginStart="24dp"
-                        android:layout_toEndOf="@+id/imageViewBatteryHealth"
-                        android:layout_toRightOf="@+id/imageViewBatteryHealth"
-                        android:text="@string/health"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/Gray_Word" />
-
-                    <TextView
-                        android:id="@+id/textViewBatteryHealth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="24dp"
-                        android:layout_marginRight="24dp"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@android:color/white" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/bg_battery_state" >
-
-                    <ImageView
-                        android:id="@+id/imageViewGoCharge"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="15dp"
-                        android:layout_marginStart="15dp"
-                        android:contentDescription="@string/content_description"
-                        android:padding="5dp"
-                        android:scaleType="centerInside"
-                        android:src="@drawable/btn_charge" />
-
-                    <TextView
-                        android:id="@+id/textViewBatteryVoltageTitle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginStart="24dp"
-                        android:layout_toEndOf="@+id/imageViewGoCharge"
-                        android:layout_toRightOf="@+id/imageViewGoCharge"
-                        android:text="@string/voltage"
-                        android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:textColor="@color/Gray_Word" />
 
                     <TextView
                         android:id="@+id/textViewBatteryVoltage"

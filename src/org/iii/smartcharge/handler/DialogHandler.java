@@ -51,6 +51,8 @@ public abstract class DialogHandler
 		TextView tvMessage = (TextView) dialog.findViewById(R.id.textViewDlgMessage);
 		tvTitle.setText(R.string.attention);
 		tvMessage.setText(strMsg);
+		tvTitle.setTextColor(0xFFFF0000);
+		tvMessage.setTextColor(0xFFCCCCCC);
 		Button btn = (Button) dialog.findViewById(R.id.dialog_button_ok);
 		btn.setOnClickListener(new OnClickListener()
 		{
@@ -73,6 +75,8 @@ public abstract class DialogHandler
 		TextView tvMessage = (TextView) dialog.findViewById(R.id.textViewDlgMessage);
 		tvTitle.setText(R.string.attention);
 		tvMessage.setText(strMsg);
+		tvTitle.setTextColor(0xFFFF0000);
+		tvMessage.setTextColor(0xFFCCCCCC);
 		Button btnOK = (Button) dialog.findViewById(R.id.dialog_button_ok);
 		Button btnCancel = (Button) dialog.findViewById(R.id.dialog_button_cancel);
 		btnCancel.setVisibility(View.VISIBLE);
@@ -102,5 +106,15 @@ public abstract class DialogHandler
 			}
 		});
 		dialog.show();
+	}
+
+	public static Dialog showLoading(Context context)
+	{
+		final Dialog dialog = new Dialog(context, R.style.MyDialog);
+		dialog.setContentView(R.layout.loading);
+		dialog.setCanceledOnTouchOutside(false);
+		dialog.setCancelable(false);
+		dialog.show();
+		return dialog;
 	}
 }

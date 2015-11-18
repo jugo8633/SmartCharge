@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.charset.Charset;
 
 import org.iii.smartcharge.common.Logs;
 
@@ -20,12 +21,27 @@ public class CmpHandler
 	static public final int	ERR_SOCKET_INVALID	= -4;
 	static public final int	ERR_INVALID_PARAM	= -5;
 
-	private final String	mstrCenterIP	= "140.92.142.158";
-	private final int		mnCenterPort	= 6607;
+	private final String					mstrCenterIP					= "140.92.142.158";
+	private final int						mnCenterPort					= 6607;
+	private OnPowerStateResponseListener	onPowerStateResponseListener	= null;
 
 	public CmpHandler()
 	{
 
+	}
+
+	/** Response callback **/
+	public static interface OnPowerStateResponseListener
+	{
+		void onResponse(int nResult, String strData);
+	}
+
+	public void setOnPowerStateResponseListener(CmpHandler.OnPowerStateResponseListener listener)
+	{
+		if (null != listener)
+		{
+			onPowerStateResponseListener = listener;
+		}
 	}
 
 	private int getSequence()
@@ -42,6 +58,13 @@ public class CmpHandler
 	{
 		Thread t = new Thread(
 				new sendCmpRunnable(CmpProtocol.power_port_request, strController, strWire, strPort, strState));
+		t.start();
+	}
+
+	public void powerPortState(String strController, String strWire)
+	{
+		Thread t = new Thread(
+				new sendCmpRunnable(CmpProtocol.power_port_state_request, strController, strWire, null, null));
 		t.start();
 	}
 
@@ -74,6 +97,9 @@ public class CmpHandler
 				{
 				case CmpProtocol.power_port_request:
 					powerPortSet();
+					break;
+				case CmpProtocol.power_port_state_request:
+					powerPortState();
 					break;
 				}
 				socket.close();
@@ -133,6 +159,71 @@ public class CmpHandler
 			}
 			buf.clear();
 			buf = null;
+
+			return nRet;
+		}
+
+		private int powerPortState() throws IOException
+		{
+			int nRet = 0;
+			final int nSequence = getSequence();
+			OutputStream outSocket = socket.getOutputStream();
+			InputStream inSocket = socket.getInputStream();
+			String strState = "";
+
+			int nTotalLen = CmpProtocol.CMP_HEADER_SIZE + 1 + mstrController.length() + 1;
+
+			ByteBuffer buf = ByteBuffer.allocate(nTotalLen);
+
+			/** header **/
+			buf.putInt(nTotalLen);
+			buf.putInt(CmpProtocol.power_port_state_request);
+			buf.putInt(CmpProtocol.STATUS_ROK);
+			buf.putInt(nSequence);
+
+			/** body **/
+			buf.put(mstrWire.getBytes("US-ASCII"));
+			buf.put(mstrController.getBytes("US-ASCII"));
+			buf.put((byte) 0);
+
+			/** send request **/
+			buf.flip();
+			outSocket.write(buf.array());
+			buf.clear();
+
+			/** receive response **/
+			buf = ByteBuffer.allocate(CmpProtocol.MAX_DATA_LEN);
+			nTotalLen = inSocket.read(buf.array());
+			buf.rewind();
+			Logs.showTrace("CMP Response Size: " + String.valueOf(nTotalLen));
+			if (CmpProtocol.CMP_HEADER_SIZE <= nTotalLen)
+			{
+				nRet = checkResponse(buf, nSequence);
+				buf.order(ByteOrder.BIG_ENDIAN);
+				if (SUCCESS == nRet)
+				{
+					byte[] bytes = new byte[buf.getInt(0)];
+					buf.get(bytes);
+					String strTemp = new String(bytes, Charset.forName("UTF-8"));
+					strState = strTemp.substring(16);
+					Logs.showTrace("[CMP] Power port state response body:" + strState.trim());
+					bytes = null;
+				}
+			}
+			else
+			{
+				nRet = ERR_PACKET_LENGTH;
+			}
+			buf.clear();
+			buf = null;
+
+			if (0 >= strState.length())
+				nRet = ERR_INVALID_PARAM;
+
+			if (null != onPowerStateResponseListener)
+			{
+				onPowerStateResponseListener.onResponse(nRet, strState.trim());
+			}
 
 			return nRet;
 		}

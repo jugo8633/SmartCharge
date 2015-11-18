@@ -20,13 +20,17 @@ import org.iii.smartcharge.module.Battery.BatteryState;
 import org.iii.smartcharge.module.CmpHandler;
 import org.iii.smartcharge.module.FacebookHandler;
 import org.iii.smartcharge.view.GaugeView;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import com.facebook.appevents.AppEventsLogger;
-
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -54,6 +58,7 @@ public class MainActivity extends Activity
 	private final int			BATTERY_STATE_AC		= 1;
 	private final int			BATTERY_STATE_USB		= 2;
 	private final int			BATTERY_STATE_WARNING	= 3;
+	private Dialog				dialogLoading			= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -70,6 +75,9 @@ public class MainActivity extends Activity
 		Logs.showTrace("Hash Key: " + strHashKey);
 
 		cmpHandler = new CmpHandler();
+		cmpHandler.setOnPowerStateResponseListener(powerStatelistener);
+
+		Global.mainHandler = selfHandler;
 	}
 
 	@Override
@@ -87,6 +95,17 @@ public class MainActivity extends Activity
 	}
 
 	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		if (KeyEvent.KEYCODE_BACK == keyCode)
+		{
+			Logs.showTrace("Smart Charge Terminate!!");
+			System.exit(0);
+		}
+		return super.onKeyDown(keyCode, event);
+	}
+
+	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		Logs.showTrace("onActivityResult:" + String.valueOf(requestCode) + " " + String.valueOf(resultCode));
@@ -99,6 +118,10 @@ public class MainActivity extends Activity
 				if (Utility.isValidStr(scanResult))
 				{
 					Common.postMessage(selfHandler, MSG.QR_CODE, 0, 0, scanResult);
+				}
+				else
+				{
+					DialogHandler.showAlert(this, this.getString(R.string.qr_fail), false);
 				}
 				Logs.showTrace("QR Code:" + scanResult);
 			}
@@ -142,7 +165,7 @@ public class MainActivity extends Activity
 		listMenuHandler = new ListMenuHandler(this, selfHandler);
 		listMenuHandler.init();
 		powerGauge = (GaugeView) findViewById(R.id.gaugeViewPower);
-		powerGauge.setBackgroundResource(R.drawable.gauge_background);
+		powerGauge.setBackgroundResource(R.drawable.electricmeter);
 		powerGauge.setAmount(-90);
 		this.getActionBar().show();
 
@@ -201,13 +224,12 @@ public class MainActivity extends Activity
 			public void run()
 			{
 				battery.analysis(MainActivity.this, batteryState);
-
 				if (batteryState.bChanged)
 				{
 					Common.postMessage(selfHandler, MSG.CHARGE_STATE, 0, 0, null);
 				}
 			}
-		}, 500, 1000);
+		}, 1000, 1000);
 	}
 
 	private void setChargeState()
@@ -272,16 +294,16 @@ public class MainActivity extends Activity
 		TextView tvBattery = null;
 
 		/** Battery Temperature **/
-		tvBattery = (TextView) findViewById(R.id.textViewBatteryTemperature);
-		tvBattery.setText(String.valueOf(batteryState.fTemperature) + "℃");
+		// tvBattery = (TextView) findViewById(R.id.textViewBatteryTemperature);
+		// tvBattery.setText(String.valueOf(batteryState.fTemperature) + "℃");
 
 		/** Battery Health **/
-		tvBattery = (TextView) findViewById(R.id.textViewBatteryHealth);
-		tvBattery.setText(batteryState.strHealth);
+		// tvBattery = (TextView) findViewById(R.id.textViewBatteryHealth);
+		// tvBattery.setText(batteryState.strHealth);
 
 		/** Battery Voltage **/
-		tvBattery = (TextView) findViewById(R.id.textViewBatteryVoltage);
-		tvBattery.setText(String.valueOf(batteryState.nVoltage) + "mV");
+		// tvBattery = (TextView) findViewById(R.id.textViewBatteryVoltage);
+		// tvBattery.setText(String.valueOf(batteryState.nVoltage) + "mV");
 	}
 
 	private OnClickListener itemClickListener = new OnClickListener()
@@ -330,10 +352,54 @@ public class MainActivity extends Activity
 		cmpHandler.powerPortSet(strController, strWire, strPort, strState);
 	}
 
-	private void showPowerSwitch()
+	private void showPowerSwitch(String strJSON)
 	{
+		try
+		{
+			JSONObject jsonMain = new JSONObject(strJSON);
+			JSONArray jsonWires = jsonMain.getJSONArray("wires");
+			JSONObject jsonWire = null;
+			for (int i = 0; i < jsonWires.length(); ++i)
+			{
+				jsonWire = jsonWires.getJSONObject(i);
+				Logs.showTrace(
+						"wire:" + String.valueOf(jsonWire.getInt("wire")) + " state:" + jsonWire.getString("state"));
+			}
+
+		}
+		catch (JSONException e)
+		{
+			e.printStackTrace();
+			if (null != dialogLoading)
+				dialogLoading.dismiss();
+			DialogHandler.showAlert(MainActivity.this, MainActivity.this.getString(R.string.power_state_fail), false);
+			return;
+		}
+
+		if (null != dialogLoading)
+			dialogLoading.dismiss();
+
 		flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_SWITCH);
 		actionbarHandler.showBackBtn(true);
+	}
+
+	private void getPowerPortState(String strController)
+	{
+		dialogLoading = DialogHandler.showLoading(this);
+		cmpHandler.powerPortState(strController, "0");
+	}
+
+	private void powerPortStateResp(int nResult, String strData)
+	{
+		if (CmpHandler.SUCCESS != nResult)
+		{
+			if (null != dialogLoading)
+				dialogLoading.dismiss();
+			DialogHandler.showAlert(MainActivity.this, MainActivity.this.getString(R.string.power_state_fail), false);
+			return;
+		}
+
+		showPowerSwitch(strData);
 	}
 
 	private void showStationLocation()
@@ -347,6 +413,15 @@ public class MainActivity extends Activity
 		flipperHandler.showView(FlipperHandler.VIEW_ID_COPY_RIGHT);
 		actionbarHandler.showBackBtn(true);
 	}
+
+	private CmpHandler.OnPowerStateResponseListener powerStatelistener = new CmpHandler.OnPowerStateResponseListener()
+	{
+		@Override
+		public void onResponse(int nResult, String strData)
+		{
+			Common.postMessage(selfHandler, MSG.POWER_STATE, nResult, 0, strData);
+		}
+	};
 
 	private Handler selfHandler = new Handler()
 	{
@@ -382,11 +457,19 @@ public class MainActivity extends Activity
 				setChargeState();
 				break;
 			case MSG.QR_CODE:
-				showPowerSwitch();
-				// powerPortSet((String) msg.obj, "1", "2", "1");
+				flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_SWITCH);
+				actionbarHandler.showBackBtn(true);
+				// getPowerPortState((String) msg.obj);
 				break;
 			case MSG.FINISH:
 				MainActivity.this.finish();
+				break;
+			case MSG.POWER_STATE:
+				powerPortStateResp(msg.arg1, (String) msg.obj);
+				break;
+			case MSG.FB_LOGIN:
+				Logs.showTrace("Facebook Relogin");
+				facebook.login();
 				break;
 			}
 		}

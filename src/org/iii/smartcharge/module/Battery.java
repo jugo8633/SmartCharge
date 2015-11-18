@@ -38,7 +38,7 @@ public class Battery
 			nLevel = 0;
 			bUsbCharge = false;
 			bAcCharge = false;
-			bChanged = false;
+			bChanged = true;
 			fTemperature = 0.0f;
 			strHealth = "¥¼ª¾¿ù»~";
 			nHealth = -1;
@@ -87,6 +87,10 @@ public class Battery
 
 			Logs.showTrace("Battery level:" + String.valueOf(mnBatteryLevel));
 			Logs.showTrace("Battery Temperature:" + String.valueOf(mfTemperature));
+		}
+		else
+		{
+			batteryState.bChanged = false;
 		}
 
 		batteryState.nHealth = itbattery.getIntExtra(BatteryManager.EXTRA_HEALTH,

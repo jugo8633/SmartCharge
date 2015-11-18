@@ -10,13 +10,17 @@ package org.iii.smartcharge.module;
 
 import java.util.Arrays;
 
+import org.iii.smartcharge.common.Common;
+import org.iii.smartcharge.common.Global;
 import org.iii.smartcharge.common.Logs;
+import org.iii.smartcharge.common.MSG;
 import org.json.JSONObject;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.SparseArray;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookAuthorizationException;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
@@ -86,8 +90,11 @@ public class FacebookHandler
 	{
 		if (null == theActivity || null == callbackManager || null == loginManager)
 			return;
-		loginManager.logInWithReadPermissions(theActivity,
-				Arrays.asList("email", "public_profile", "user_birthday", "user_likes", "user_location"));
+		// loginManager.logInWithReadPermissions(theActivity,
+		// Arrays.asList("email", "public_profile", "user_birthday",
+		// "user_likes", "user_location"));
+
+		loginManager.logInWithReadPermissions(theActivity, Arrays.asList("email", "public_profile"));
 	}
 
 	private void callGraph(final AccessToken strToken)
@@ -103,9 +110,11 @@ public class FacebookHandler
 					Logs.showTrace("Facebook Token:" + strToken.getToken());
 					Logs.showTrace("Facebook ID:" + object.optString("id"));
 					Logs.showTrace("Facebook Name:" + object.optString("name"));
-					Logs.showTrace("Facebook Link:" + object.optString("link"));
+					// Logs.showTrace("Facebook Link:" +
+					// object.optString("link"));
 					Logs.showTrace("Facebook Email:" + object.optString("email"));
-					Logs.showTrace("Facebook Birthday:" + object.optString("birthday"));
+					// Logs.showTrace("Facebook Birthday:" +
+					// object.optString("birthday"));
 					Logs.showTrace("Facebook Gender:" + object.optString("gender"));
 					Logs.showTrace("Facebook Locale:" + object.optString("locale"));
 					Logs.showTrace("Facebook Timezone:" + object.optString("timezone"));
@@ -145,7 +154,18 @@ public class FacebookHandler
 		public void onError(FacebookException error)
 		{
 			Logs.showTrace("Facebook Exception:" + error.toString());
-			callbackFacebookResult(null, null, null, error.toString());
+			if (error instanceof FacebookAuthorizationException)
+			{
+				if (AccessToken.getCurrentAccessToken() != null)
+				{
+					LoginManager.getInstance().logOut();
+					Common.postMessage(Global.mainHandler, MSG.FB_LOGIN, 0, 0, null);
+				}
+			}
+			else
+			{
+				callbackFacebookResult(null, null, null, error.toString());
+			}
 		}
 
 	};

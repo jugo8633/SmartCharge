@@ -19,5 +19,7 @@ public abstract class MSG
 	public static final int	QR_CODE			= ID + 12;
 	public static final int	FINISH			= ID + 13;
 	public static final int	DIALOG_CLICKED	= ID + 14;
+	public static final int	POWER_STATE		= ID + 15;
+	public static final int	FB_LOGIN		= ID + 16;
 
 }

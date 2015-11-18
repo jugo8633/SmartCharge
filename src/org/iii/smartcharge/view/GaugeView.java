@@ -1,5 +1,7 @@
 package org.iii.smartcharge.view;
 
+import org.iii.smartcharge.R;
+
 import android.content.Context;
 import android.graphics.Color;
 import android.util.AttributeSet;
@@ -38,11 +40,12 @@ public class GaugeView extends RelativeLayout
 	private void init(Context context)
 	{
 		ivPointer = new ImageView(context);
-		ivPointer.setScaleType(ScaleType.FIT_XY);
+		ivPointer.setScaleType(ScaleType.CENTER_INSIDE);
 		ivPointer.setAdjustViewBounds(false);
-		ivPointer.setBackgroundColor(Color.argb(155, 61, 68, 80));
-		RelativeLayout.LayoutParams ivPointerlayoutParams = new RelativeLayout.LayoutParams(15,
-				LayoutParams.MATCH_PARENT);
+		// ivPointer.setBackgroundColor(Color.argb(155, 61, 68, 80));
+		ivPointer.setImageResource(R.drawable.pointer);
+		RelativeLayout.LayoutParams ivPointerlayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
 		ivPointerlayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
 		ivPointerlayoutParams.setMargins(0, 80, 0, 20);
 		ivPointer.setLayoutParams(ivPointerlayoutParams);

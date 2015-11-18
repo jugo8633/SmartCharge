@@ -1,6 +1,7 @@
 package org.iii.smartcharge.module;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import org.iii.smartcharge.common.Device;
@@ -302,6 +303,8 @@ public final class CameraHandler
 
 	public void startPreview()
 	{
+		if (null == camera)
+			return;
 		camera.startPreview();
 		if (useOneShotPreviewCallback)
 		{
@@ -316,12 +319,16 @@ public final class CameraHandler
 
 	public void stopPreview()
 	{
+		if (null == camera)
+			return;
 		camera.stopPreview();
 		camera.setPreviewCallback(null);
 	}
 
 	public void release()
 	{
+		if (null == camera)
+			return;
 		camera.release();
 		camera = null;
 	}
@@ -331,7 +338,20 @@ public final class CameraHandler
 		bAutoFocus = bEnable;
 		if (bAutoFocus)
 		{
-			camera.autoFocus(autoFocusCallback);
+			Camera.Parameters p = camera.getParameters();
+			List<String> focusModes = p.getSupportedFocusModes();
+
+			if (focusModes != null && focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO))
+			{
+				try
+				{
+					camera.autoFocus(autoFocusCallback);
+				}
+				catch (Exception e)
+				{
+
+				}
+			}
 		}
 	}
 
