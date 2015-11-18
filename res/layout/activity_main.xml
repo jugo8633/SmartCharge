@@ -71,25 +71,20 @@
                         android:src="@drawable/ic_warning_black_48dp" />
                 </LinearLayout>
 
-                <org.iii.smartcharge.view.GaugeView
-                    android:id="@+id/gaugeViewPower"
-                    android:layout_width="400dp"
-                    android:layout_height="200dp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="50dp" >
-                </org.iii.smartcharge.view.GaugeView>
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/ViewPager"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp" >
+                </android.support.v4.view.ViewPager>
 
-                <TextView
-                    android:id="@+id/textViewBatteryState"
+                <View
+                    android:id="@id/android:empty"
                     android:layout_width="wrap_content"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:gravity="top|center_horizontal"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textColor="@android:color/white"
-                    android:textSize="54sp"
-                    android:textStyle="bold" />
+                    android:gravity="top|center_horizontal" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -98,6 +93,32 @@
                     android:baselineAligned="false"
                     android:gravity="center"
                     android:orientation="horizontal" >
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutPowerLevel"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.25"
+                        android:gravity="center"
+                        android:orientation="vertical" >
+
+                        <ImageView
+                            android:id="@+id/imageViewPowerLevel"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:contentDescription="@string/content_description"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/btn_charge" />
+
+                        <TextView
+                            android:id="@+id/textViewPowerLevel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:text="@string/power_level"
+                            android:textAppearance="?android:attr/textAppearanceMedium"
+                            android:textColor="@color/Gray_Word" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/linearLayoutTemperature"

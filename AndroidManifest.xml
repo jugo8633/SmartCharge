@@ -46,7 +46,6 @@
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
             android:multiprocess="true"
             android:screenOrientation="portrait" >
             <intent-filter>

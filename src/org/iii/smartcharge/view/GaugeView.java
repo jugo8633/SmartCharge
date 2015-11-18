@@ -3,7 +3,6 @@ package org.iii.smartcharge.view;
 import org.iii.smartcharge.R;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
@@ -64,7 +63,6 @@ public class GaugeView extends RelativeLayout
 		rotate.setAnimationListener(listener);
 		rotate.setFillAfter(true);
 		ivPointer.setAnimation(rotate);
-		// Logs.showTrace("set amount:" + String.valueOf(mnEndAmount));
 	}
 
 	private AnimationListener listener = new AnimationListener()

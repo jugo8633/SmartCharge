@@ -22,11 +22,13 @@
     <string name="about_power_station">關於智慧充電站</string>
     <string name="private_contract">隱私權條款</string>
     <string name="service_contract">服務條款</string>
+    <string name="power_level">電量</string>
     <string name="temperature">溫度</string>
     <string name="health">健康</string>
     <string name="charge">充電</string>
     <string name="voltage">電壓</string>
     <string name="qr_fail">QR Code 讀取失敗</string>
     <string name="power_state_fail">電箱資料讀取失敗</string>
+    <string name="zero_temperature">0℃</string>
 
 </resources>

@@ -14,6 +14,8 @@ public class Battery
 	private boolean			mbCharging		= false;
 	private int				mnBatteryLevel	= 0;
 	private float			mfTemperature	= 0.0f;
+	private int				mnVoltage		= 0;
+	private int				mnHealth		= -1;
 
 	public static class BatteryState
 	{
@@ -40,7 +42,7 @@ public class Battery
 			bAcCharge = false;
 			bChanged = true;
 			fTemperature = 0.0f;
-			strHealth = "¥¼ª¾¿ù»~";
+			strHealth = "";
 			nHealth = -1;
 			nVoltage = 0;
 		}
@@ -77,44 +79,48 @@ public class Battery
 		/** Get Battery Templature **/
 		batteryState.fTemperature = ((float) itbattery.getIntExtra(BatteryManager.EXTRA_TEMPERATURE, 0)) / 10;
 
+		/** Get Battery Voltage **/
+		batteryState.nVoltage = itbattery.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0); // ï¿½qï¿½ï¿½ï¿½qï¿½ï¿½
+
+		/** Get Battery Health **/
+		batteryState.nHealth = itbattery.getIntExtra(BatteryManager.EXTRA_HEALTH,
+				BatteryManager.BATTERY_HEALTH_UNKNOWN);
+		switch (batteryState.nHealth)
+		{
+		case BatteryManager.BATTERY_HEALTH_UNKNOWN:
+			batteryState.strHealth = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½~";
+			break;
+		case BatteryManager.BATTERY_HEALTH_GOOD:
+			batteryState.strHealth = "ï¿½ï¿½ï¿½Aï¿½}ï¿½n";
+			break;
+		case BatteryManager.BATTERY_HEALTH_DEAD:
+			batteryState.strHealth = "ï¿½qï¿½ï¿½ï¿½Sï¿½ï¿½ï¿½q";
+			break;
+		case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
+			batteryState.strHealth = "ï¿½qï¿½ï¿½ï¿½qï¿½ï¿½ï¿½Lï¿½ï¿½";
+			break;
+		case BatteryManager.BATTERY_HEALTH_OVERHEAT:
+			batteryState.strHealth = "ï¿½qï¿½ï¿½ï¿½Lï¿½ï¿½";
+			break;
+		}
+
+		/** Check change **/
 		if (mbCharging != batteryState.bCharging || mnBatteryLevel != batteryState.nLevel
-				|| mfTemperature != batteryState.fTemperature)
+				|| mfTemperature != batteryState.fTemperature || mnVoltage != batteryState.nVoltage
+				|| mnHealth != batteryState.nHealth)
 		{
 			batteryState.bChanged = true;
 			mbCharging = batteryState.bCharging;
 			mnBatteryLevel = batteryState.nLevel;
 			mfTemperature = batteryState.fTemperature;
+			mnVoltage = batteryState.nVoltage;
 
 			Logs.showTrace("Battery level:" + String.valueOf(mnBatteryLevel));
-			Logs.showTrace("Battery Temperature:" + String.valueOf(mfTemperature));
 		}
 		else
 		{
 			batteryState.bChanged = false;
 		}
-
-		batteryState.nHealth = itbattery.getIntExtra(BatteryManager.EXTRA_HEALTH,
-				BatteryManager.BATTERY_HEALTH_UNKNOWN);
-		switch(batteryState.nHealth)
-		{
-		case BatteryManager.BATTERY_HEALTH_UNKNOWN:
-			batteryState.strHealth = "¥¼ª¾¿ù»~";
-			break;
-		case BatteryManager.BATTERY_HEALTH_GOOD:
-			batteryState.strHealth = "ª¬ºA¨}¦n";
-			break;
-		case BatteryManager.BATTERY_HEALTH_DEAD:
-			batteryState.strHealth = "¹q¦À¨S¦³¹q";
-			break;
-		case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
-			batteryState.strHealth = "¹q¦À¹qÀ£¹L°ª";
-			break;
-		case BatteryManager.BATTERY_HEALTH_OVERHEAT:
-			batteryState.strHealth = "¹q¦À¹L¼ö";
-			break;
-		}
-
-		batteryState.nVoltage = itbattery.getIntExtra(BatteryManager.EXTRA_VOLTAGE, 0); // ¹q¦À¹qÀ£
 
 	}
 }

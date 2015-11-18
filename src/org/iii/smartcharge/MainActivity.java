@@ -15,11 +15,13 @@ import org.iii.smartcharge.handler.DrawerMenuHandler;
 import org.iii.smartcharge.handler.FlipperHandler;
 import org.iii.smartcharge.handler.ListMenuHandler;
 import org.iii.smartcharge.handler.PowerSwitchHandler;
+import org.iii.smartcharge.handler.ViewPagerHandler;
 import org.iii.smartcharge.module.Battery;
 import org.iii.smartcharge.module.Battery.BatteryState;
 import org.iii.smartcharge.module.CmpHandler;
 import org.iii.smartcharge.module.FacebookHandler;
 import org.iii.smartcharge.view.GaugeView;
+import org.iii.smartcharge.view.TemperatureGaugeView;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,27 +40,29 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity
 {
-	private ActionbarHandler	actionbarHandler		= null;
-	private DrawerMenuHandler	drawerMenu				= null;
-	private ListMenuHandler		listMenuHandler			= null;
-	private GaugeView			powerGauge				= null;
-	private Timer				chkChargeTimer			= null;
-	private final int			LAYOUT_MAIN				= 2;
-	private final int			LAYOUT_LOGIN			= 1;
-	private TextView			tvBatteryState			= null;
-	private TextView			btnFacebook				= null;
-	private TextView			btnSkip					= null;
-	private FacebookHandler		facebook				= null;
-	private CmpHandler			cmpHandler				= null;
-	private PowerSwitchHandler	powerSwitchHandler		= null;
-	private FlipperHandler		flipperHandler			= null;
-	private static Battery		battery					= null;
-	private static BatteryState	batteryState			= null;
-	private final int			BATTERY_STATE_BATTERY	= 0;
-	private final int			BATTERY_STATE_AC		= 1;
-	private final int			BATTERY_STATE_USB		= 2;
-	private final int			BATTERY_STATE_WARNING	= 3;
-	private Dialog				dialogLoading			= null;
+	private ActionbarHandler		actionbarHandler		= null;
+	private DrawerMenuHandler		drawerMenu				= null;
+	private ListMenuHandler			listMenuHandler			= null;
+	private GaugeView				powerGauge				= null;
+	private TemperatureGaugeView	temperatureGauge		= null;
+	private Timer					chkChargeTimer			= null;
+	private final int				LAYOUT_MAIN				= 2;
+	private final int				LAYOUT_LOGIN			= 1;
+	private TextView				tvBatteryState			= null;
+	private TextView				btnFacebook				= null;
+	private TextView				btnSkip					= null;
+	private FacebookHandler			facebook				= null;
+	private CmpHandler				cmpHandler				= null;
+	private PowerSwitchHandler		powerSwitchHandler		= null;
+	private FlipperHandler			flipperHandler			= null;
+	private static Battery			battery					= null;
+	private static BatteryState		batteryState			= null;
+	private final int				BATTERY_STATE_BATTERY	= 0;
+	private final int				BATTERY_STATE_AC		= 1;
+	private final int				BATTERY_STATE_USB		= 2;
+	private final int				BATTERY_STATE_WARNING	= 3;
+	private Dialog					dialogLoading			= null;
+	private ViewPagerHandler		viewPage				= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -155,8 +159,6 @@ public class MainActivity extends Activity
 
 	private void showMainLayout()
 	{
-		Global.mainHandler = selfHandler;
-
 		setContentView(R.layout.activity_main);
 		actionbarHandler = new ActionbarHandler(this, selfHandler);
 		actionbarHandler.init();
@@ -164,12 +166,22 @@ public class MainActivity extends Activity
 		drawerMenu.init(R.id.drawer_layout);
 		listMenuHandler = new ListMenuHandler(this, selfHandler);
 		listMenuHandler.init();
-		powerGauge = (GaugeView) findViewById(R.id.gaugeViewPower);
+		viewPage = new ViewPagerHandler(this, selfHandler);
+		viewPage.init();
+		//viewPage.getView(ViewPagerHandler.PAGE_POWER);
+		powerGauge = (GaugeView) viewPage.getView(ViewPagerHandler.PAGE_POWER).findViewById(R.id.gaugeViewPower);
 		powerGauge.setBackgroundResource(R.drawable.electricmeter);
 		powerGauge.setAmount(-90);
+
+		temperatureGauge = (TemperatureGaugeView) viewPage.getView(ViewPagerHandler.PAGE_TEMPERATURE)
+				.findViewById(R.id.gaugeViewTemperature);
+		temperatureGauge.setBackgroundResource(R.drawable.gauge_temperature);
+		temperatureGauge.setAmount(-135);
+
 		this.getActionBar().show();
 
-		tvBatteryState = (TextView) findViewById(R.id.textViewBatteryState);
+		tvBatteryState = (TextView) viewPage.getView(ViewPagerHandler.PAGE_POWER)
+				.findViewById(R.id.textViewBatteryState);
 
 		if (null == chkChargeTimer)
 		{
@@ -182,8 +194,9 @@ public class MainActivity extends Activity
 		{
 			powerSwitchHandler = new PowerSwitchHandler(this, selfHandler);
 			powerSwitchHandler.init(flipperHandler.getView(FlipperHandler.VIEW_ID_POWER_SWITCH));
-
 		}
+
+		viewPage.showPage(ViewPagerHandler.PAGE_TEMPERATURE);
 
 	}
 
@@ -200,7 +213,7 @@ public class MainActivity extends Activity
 
 	private void showLayout(final int nLayout)
 	{
-		switch(nLayout)
+		switch (nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -224,9 +237,11 @@ public class MainActivity extends Activity
 			public void run()
 			{
 				battery.analysis(MainActivity.this, batteryState);
+				//	Logs.showTrace("setChargeTimerTask " + String.valueOf(batteryState.bChanged));
 				if (batteryState.bChanged)
 				{
 					Common.postMessage(selfHandler, MSG.CHARGE_STATE, 0, 0, null);
+					Logs.showTrace("Update Power State");
 				}
 			}
 		}, 1000, 1000);
@@ -294,8 +309,11 @@ public class MainActivity extends Activity
 		TextView tvBattery = null;
 
 		/** Battery Temperature **/
-		// tvBattery = (TextView) findViewById(R.id.textViewBatteryTemperature);
-		// tvBattery.setText(String.valueOf(batteryState.fTemperature) + "℃");
+		int nDegress = (int) ((0 - (batteryState.nLevel * 2.7)) + 135);
+		temperatureGauge.setAmount(nDegress);
+		tvBattery = (TextView) viewPage.getView(ViewPagerHandler.PAGE_TEMPERATURE)
+				.findViewById(R.id.textViewTemperature);
+		tvBattery.setText(String.valueOf(batteryState.fTemperature) + "℃");
 
 		/** Battery Health **/
 		// tvBattery = (TextView) findViewById(R.id.textViewBatteryHealth);
@@ -311,7 +329,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch(v.getId())
+			switch (v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				if (Utility.checkInternet(MainActivity.this))
@@ -414,65 +432,71 @@ public class MainActivity extends Activity
 		actionbarHandler.showBackBtn(true);
 	}
 
-	private CmpHandler.OnPowerStateResponseListener powerStatelistener = new CmpHandler.OnPowerStateResponseListener()
-	{
-		@Override
-		public void onResponse(int nResult, String strData)
-		{
-			Common.postMessage(selfHandler, MSG.POWER_STATE, nResult, 0, strData);
-		}
-	};
+	private CmpHandler.OnPowerStateResponseListener	powerStatelistener	= new CmpHandler.OnPowerStateResponseListener()
+																		{
+																			@Override
+																			public void onResponse(int nResult,
+																					String strData)
+																			{
+																				Common.postMessage(selfHandler,
+																						MSG.POWER_STATE, nResult, 0,
+																						strData);
+																			}
+																		};
 
-	private Handler selfHandler = new Handler()
-	{
-		@Override
-		public void handleMessage(Message msg)
-		{
-			switch(msg.what)
-			{
-			case LAYOUT_LOGIN:
-				showLogin();
-				break;
-			case LAYOUT_MAIN:
-				showMainLayout();
-				break;
-			case MSG.MENU_CLICK:
-				drawerMenu.switchDisplay();
-				break;
-			case MSG.BACK_CLICK:
-				flipperHandler.close();
-				actionbarHandler.showBackBtn(false);
-				break;
-			case MSG.DRAWER_OPEN:
-				actionbarHandler.setMenuState(true);
-				break;
-			case MSG.DRAWER_CLOSE:
-				actionbarHandler.setMenuState(false);
-				break;
-			case MSG.MENU_SELECTED:
-				drawerMenu.switchDisplay();
-				showLayout(msg.arg1);
-				break;
-			case MSG.CHARGE_STATE:
-				setChargeState();
-				break;
-			case MSG.QR_CODE:
-				flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_SWITCH);
-				actionbarHandler.showBackBtn(true);
-				// getPowerPortState((String) msg.obj);
-				break;
-			case MSG.FINISH:
-				MainActivity.this.finish();
-				break;
-			case MSG.POWER_STATE:
-				powerPortStateResp(msg.arg1, (String) msg.obj);
-				break;
-			case MSG.FB_LOGIN:
-				Logs.showTrace("Facebook Relogin");
-				facebook.login();
-				break;
-			}
-		}
+	private Handler									selfHandler			= new Handler()
+																		{
+																			@Override
+																			public void handleMessage(Message msg)
+																			{
+																				switch (msg.what)
+																				{
+																				case LAYOUT_LOGIN:
+																					showLogin();
+																					break;
+																				case LAYOUT_MAIN:
+																					showMainLayout();
+																					break;
+																				case MSG.MENU_CLICK:
+																					drawerMenu.switchDisplay();
+																					break;
+																				case MSG.BACK_CLICK:
+																					flipperHandler.close();
+																					actionbarHandler.showBackBtn(false);
+																					break;
+																				case MSG.DRAWER_OPEN:
+																					actionbarHandler.setMenuState(true);
+																					break;
+																				case MSG.DRAWER_CLOSE:
+																					actionbarHandler
+																							.setMenuState(false);
+																					break;
+																				case MSG.MENU_SELECTED:
+																					drawerMenu.switchDisplay();
+																					showLayout(msg.arg1);
+																					break;
+																				case MSG.CHARGE_STATE:
+																					setChargeState();
+																					break;
+																				case MSG.QR_CODE:
+																					flipperHandler.showView(
+																							FlipperHandler.VIEW_ID_POWER_SWITCH);
+																					actionbarHandler.showBackBtn(true);
+																					// getPowerPortState((String) msg.obj);
+																					break;
+																				case MSG.FINISH:
+																					MainActivity.this.finish();
+																					break;
+																				case MSG.POWER_STATE:
+																					powerPortStateResp(msg.arg1,
+																							(String) msg.obj);
+																					break;
+																				case MSG.FB_LOGIN:
+																					Logs.showTrace("Facebook Relogin");
+																					facebook.login();
+																					break;
+																				}
+																			}
 
-	};
+																		};
 }
