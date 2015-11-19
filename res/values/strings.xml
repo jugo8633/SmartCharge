@@ -30,5 +30,10 @@
     <string name="qr_fail">QR Code 讀取失敗</string>
     <string name="power_state_fail">電箱資料讀取失敗</string>
     <string name="zero_temperature">0℃</string>
+    <string name="battery_health_unknow">狀態未知</string>
+    <string name="battery_health_good">狀態良好</string>
+    <string name="battery_health_dead">狀態異常</string>
+    <string name="battery_health_over_voltage">電壓異常</string>
+    <string name="battery_health_over_head">電時過熱</string>
 
 </resources>

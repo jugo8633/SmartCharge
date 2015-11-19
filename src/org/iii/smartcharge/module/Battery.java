@@ -25,7 +25,6 @@ public class Battery
 		public boolean	bAcCharge;
 		public boolean	bChanged;
 		public float	fTemperature;
-		public String	strHealth;
 		public int		nHealth;
 		public int		nVoltage;
 
@@ -42,7 +41,6 @@ public class Battery
 			bAcCharge = false;
 			bChanged = true;
 			fTemperature = 0.0f;
-			strHealth = "";
 			nHealth = -1;
 			nVoltage = 0;
 		}
@@ -85,24 +83,6 @@ public class Battery
 		/** Get Battery Health **/
 		batteryState.nHealth = itbattery.getIntExtra(BatteryManager.EXTRA_HEALTH,
 				BatteryManager.BATTERY_HEALTH_UNKNOWN);
-		switch (batteryState.nHealth)
-		{
-		case BatteryManager.BATTERY_HEALTH_UNKNOWN:
-			batteryState.strHealth = "�������~";
-			break;
-		case BatteryManager.BATTERY_HEALTH_GOOD:
-			batteryState.strHealth = "���A�}�n";
-			break;
-		case BatteryManager.BATTERY_HEALTH_DEAD:
-			batteryState.strHealth = "�q���S���q";
-			break;
-		case BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE:
-			batteryState.strHealth = "�q���q���L��";
-			break;
-		case BatteryManager.BATTERY_HEALTH_OVERHEAT:
-			batteryState.strHealth = "�q���L��";
-			break;
-		}
 
 		/** Check change **/
 		if (mbCharging != batteryState.bCharging || mnBatteryLevel != batteryState.nLevel

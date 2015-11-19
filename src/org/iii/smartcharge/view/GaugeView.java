@@ -17,6 +17,7 @@ public class GaugeView extends RelativeLayout
 	private int	mnStartAmount	= -90;
 	private int	mnEndAmount		= 90;
 	ImageView	ivPointer		= null;
+	ImageView	ivCover			= null;
 
 	public GaugeView(Context context)
 	{
@@ -41,15 +42,23 @@ public class GaugeView extends RelativeLayout
 		ivPointer = new ImageView(context);
 		ivPointer.setScaleType(ScaleType.CENTER_INSIDE);
 		ivPointer.setAdjustViewBounds(false);
-		// ivPointer.setBackgroundColor(Color.argb(155, 61, 68, 80));
 		ivPointer.setImageResource(R.drawable.pointer);
 		RelativeLayout.LayoutParams ivPointerlayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
 		ivPointerlayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-		ivPointerlayoutParams.setMargins(0, 80, 0, 20);
+		ivPointerlayoutParams.setMargins(0, 75, 0, 5);
 		ivPointer.setLayoutParams(ivPointerlayoutParams);
-
 		addView(ivPointer);
+
+		ivCover = new ImageView(context);
+		ivCover.setScaleType(ScaleType.FIT_XY);
+		ivCover.setAdjustViewBounds(false);
+		ivCover.setImageResource(R.drawable.cover);
+		RelativeLayout.LayoutParams ivCoverlayoutParams = new RelativeLayout.LayoutParams(200, 120);
+		ivCoverlayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
+		ivCoverlayoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+		ivCover.setLayoutParams(ivCoverlayoutParams);
+		addView(ivCover);
 	}
 
 	public void setAmount(int nAmount)
