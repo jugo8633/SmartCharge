@@ -224,7 +224,7 @@ public class MainActivity extends Activity
 
 	private void showLayout(final int nLayout)
 	{
-		switch(nLayout)
+		switch (nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -298,27 +298,27 @@ public class MainActivity extends Activity
 
 		ivPic = (ImageView) findViewById(R.id.imageViewBSBattery);
 		if (nState == BATTERY_STATE_BATTERY)
-			ivPic.setImageResource(R.drawable.ic_battery_80_white_48dp);
+			ivPic.setImageResource(R.drawable.battery_green);
 		else
-			ivPic.setImageResource(R.drawable.ic_battery_80_black_48dp);
+			ivPic.setImageResource(R.drawable.battery_black);
 
 		ivPic = (ImageView) findViewById(R.id.imageViewBSPowerAC);
 		if (nState == BATTERY_STATE_AC)
-			ivPic.setImageResource(R.drawable.ic_power_white_48dp);
+			ivPic.setImageResource(R.drawable.plug_green);
 		else
-			ivPic.setImageResource(R.drawable.ic_power_black_48dp);
+			ivPic.setImageResource(R.drawable.plug_black);
 
 		ivPic = (ImageView) findViewById(R.id.imageViewBSUsb);
 		if (nState == BATTERY_STATE_USB)
-			ivPic.setImageResource(R.drawable.ic_usb_white_48dp);
+			ivPic.setImageResource(R.drawable.usb_green);
 		else
-			ivPic.setImageResource(R.drawable.ic_usb_black_48dp);
+			ivPic.setImageResource(R.drawable.usb_black);
 
 		ivPic = (ImageView) findViewById(R.id.imageViewBSWarning);
 		if (nState == BATTERY_STATE_WARNING)
-			ivPic.setImageResource(R.drawable.ic_warning_white_48dp);
+			ivPic.setImageResource(R.drawable.warning_green);
 		else
-			ivPic.setImageResource(R.drawable.ic_warning_black_48dp);
+			ivPic.setImageResource(R.drawable.warning_black);
 
 		TextView tvBattery = null;
 
@@ -330,10 +330,10 @@ public class MainActivity extends Activity
 		tvBattery.setText(String.valueOf(batteryState.fTemperature) + "℃");
 
 		/** Battery Health **/
-		 batteryState.nHealth = BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE;
+		// batteryState.nHealth = BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE;
 		healthBar.setAmount(batteryState.nHealth);
 		tvBattery = (TextView) viewPage.getView(ViewPagerHandler.PAGE_HEALTH).findViewById(R.id.textViewBatteryHealth);
-		switch(batteryState.nHealth)
+		switch (batteryState.nHealth)
 		{
 		case BatteryManager.BATTERY_HEALTH_UNKNOWN:
 			tvBattery.setText(getString(R.string.battery_health_unknow));
@@ -362,7 +362,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch(v.getId())
+			switch (v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				if (Utility.checkInternet(MainActivity.this))
@@ -482,7 +482,7 @@ public class MainActivity extends Activity
 			return;
 		}
 
-		switch(nIndex)
+		switch (nIndex)
 		{
 		case FootMenuHandler.ITEM_LEVEL:
 			powerGauge.setAmount(-90);
@@ -503,7 +503,7 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch(msg.what)
+			switch (msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();

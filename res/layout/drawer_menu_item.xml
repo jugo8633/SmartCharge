@@ -11,7 +11,7 @@
         android:id="@+id/drawer_menu_item_layout"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@drawable/list_item_option" >
+        android:background="@drawable/btn_bg" >
 
         <ImageView
             android:id="@+id/drawer_menu_item_image"
@@ -46,7 +46,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_marginStart="5dp"
-            android:background="@android:color/background_dark" />
+            android:background="@color/Black_Gray_Deep" />
     </RelativeLayout>
 
 </LinearLayout>

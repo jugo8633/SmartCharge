@@ -69,7 +69,7 @@ public class ListMenuHandler extends BaseHandler
 		menuAdapter = new MenuAdapter();
 
 		addItem(ITEM_CHARGE, theActivity.getString(R.string.start_charge), R.drawable.btn_charge);
-		addItem(ITEM_SELECT_STATION, theActivity.getString(R.string.select_station), R.drawable.btn_select_station);
+//		addItem(ITEM_SELECT_STATION, theActivity.getString(R.string.select_station), R.drawable.btn_select_station);
 		addItem(ITEM_LOCATION_STATION, theActivity.getString(R.string.location_station),
 				R.drawable.btn_station_location);
 		addItem(ITEM_COPY_RIGHT, theActivity.getString(R.string.copy_right), R.drawable.copy_right);
