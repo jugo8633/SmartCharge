@@ -94,6 +94,7 @@ public class Battery
 			mnBatteryLevel = batteryState.nLevel;
 			mfTemperature = batteryState.fTemperature;
 			mnVoltage = batteryState.nVoltage;
+			mnHealth = batteryState.nHealth;
 
 			Logs.showTrace("Battery level:" + String.valueOf(mnBatteryLevel));
 		}

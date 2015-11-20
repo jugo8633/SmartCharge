@@ -21,6 +21,7 @@ import org.iii.smartcharge.module.Battery;
 import org.iii.smartcharge.module.Battery.BatteryState;
 import org.iii.smartcharge.module.CmpHandler;
 import org.iii.smartcharge.module.FacebookHandler;
+import org.iii.smartcharge.view.ArcProgressBarView;
 import org.iii.smartcharge.view.GaugeView;
 import org.iii.smartcharge.view.HealthView;
 import org.iii.smartcharge.view.TemperatureGaugeView;
@@ -49,6 +50,7 @@ public class MainActivity extends Activity
 	private GaugeView				powerGauge				= null;
 	private TemperatureGaugeView	temperatureGauge		= null;
 	private HealthView				healthBar				= null;
+	private ArcProgressBarView		voltageBar				= null;
 	private Timer					chkChargeTimer			= null;
 	private final int				LAYOUT_MAIN				= 2;
 	private final int				LAYOUT_LOGIN			= 1;
@@ -187,6 +189,10 @@ public class MainActivity extends Activity
 		healthBar = (HealthView) viewPage.getView(ViewPagerHandler.PAGE_HEALTH).findViewById(R.id.healthViewBattery);
 		healthBar.setAmount(0);
 
+		voltageBar = (ArcProgressBarView) viewPage.getView(ViewPagerHandler.PAGE_VOLTAGE)
+				.findViewById(R.id.arcProgressBarViewVoltage);
+		voltageBar.addProgress(100);
+
 		this.getActionBar().show();
 
 		tvBatteryState = (TextView) viewPage.getView(ViewPagerHandler.PAGE_POWER)
@@ -224,7 +230,7 @@ public class MainActivity extends Activity
 
 	private void showLayout(final int nLayout)
 	{
-		switch (nLayout)
+		switch(nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -248,8 +254,6 @@ public class MainActivity extends Activity
 			public void run()
 			{
 				battery.analysis(MainActivity.this, batteryState);
-				// Logs.showTrace("setChargeTimerTask " +
-				// String.valueOf(batteryState.bChanged));
 				if (batteryState.bChanged || mbPowerStateUpdate)
 				{
 					mbPowerStateUpdate = false;
@@ -333,7 +337,7 @@ public class MainActivity extends Activity
 		// batteryState.nHealth = BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE;
 		healthBar.setAmount(batteryState.nHealth);
 		tvBattery = (TextView) viewPage.getView(ViewPagerHandler.PAGE_HEALTH).findViewById(R.id.textViewBatteryHealth);
-		switch (batteryState.nHealth)
+		switch(batteryState.nHealth)
 		{
 		case BatteryManager.BATTERY_HEALTH_UNKNOWN:
 			tvBattery.setText(getString(R.string.battery_health_unknow));
@@ -362,7 +366,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch (v.getId())
+			switch(v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				if (Utility.checkInternet(MainActivity.this))
@@ -482,7 +486,7 @@ public class MainActivity extends Activity
 			return;
 		}
 
-		switch (nIndex)
+		switch(nIndex)
 		{
 		case FootMenuHandler.ITEM_LEVEL:
 			powerGauge.setAmount(-90);
@@ -492,6 +496,9 @@ public class MainActivity extends Activity
 			break;
 		case FootMenuHandler.ITEM_HEALTH:
 			healthBar.setAmount(0);
+			break;
+		case FootMenuHandler.ITEM_VOLTAGE:
+			voltageBar.addProgress(100);
 			break;
 		}
 		viewPage.showPage(nIndex);
@@ -503,7 +510,7 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch (msg.what)
+			switch(msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();
