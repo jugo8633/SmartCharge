@@ -68,7 +68,15 @@ public class GaugeView extends RelativeLayout
 		RotateAnimation rotate = new RotateAnimation(mnStartAmount, mnEndAmount, Animation.RELATIVE_TO_SELF, 0.5f,
 				Animation.RELATIVE_TO_SELF, 0.9f);
 		rotate.setInterpolator(new AccelerateDecelerateInterpolator());
-		rotate.setDuration(1000);
+		if (-90 == nAmount)
+		{
+			rotate.setDuration(0);
+		}
+		else
+		{
+			rotate.setDuration(1000);
+		}
+
 		rotate.setAnimationListener(listener);
 		rotate.setFillAfter(true);
 		ivPointer.setAnimation(rotate);

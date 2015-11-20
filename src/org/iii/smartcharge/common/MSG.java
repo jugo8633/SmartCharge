@@ -22,5 +22,6 @@ public abstract class MSG
 	public static final int	POWER_STATE			= ID + 15;
 	public static final int	FB_LOGIN			= ID + 16;
 	public static final int	FOOT_MENU_SELECT	= ID + 17;
+	public static final int	PAGE_SELECTED		= ID + 18;
 
 }

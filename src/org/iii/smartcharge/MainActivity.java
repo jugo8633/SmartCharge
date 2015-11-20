@@ -191,7 +191,7 @@ public class MainActivity extends Activity
 
 		voltageBar = (ArcProgressBarView) viewPage.getView(ViewPagerHandler.PAGE_VOLTAGE)
 				.findViewById(R.id.arcProgressBarViewVoltage);
-		voltageBar.addProgress(100);
+		voltageBar.setAmount(0);
 
 		this.getActionBar().show();
 
@@ -230,7 +230,7 @@ public class MainActivity extends Activity
 
 	private void showLayout(final int nLayout)
 	{
-		switch(nLayout)
+		switch (nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -327,7 +327,7 @@ public class MainActivity extends Activity
 		TextView tvBattery = null;
 
 		/** Battery Temperature **/
-		int nDegress = (int) ((0 - (batteryState.nLevel * 2.7)) + 135);
+		int nDegress = (int) ((0 - (batteryState.fTemperature * 2.7)) + 135);
 		temperatureGauge.setAmount(nDegress);
 		tvBattery = (TextView) viewPage.getView(ViewPagerHandler.PAGE_TEMPERATURE)
 				.findViewById(R.id.textViewTemperature);
@@ -337,7 +337,7 @@ public class MainActivity extends Activity
 		// batteryState.nHealth = BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE;
 		healthBar.setAmount(batteryState.nHealth);
 		tvBattery = (TextView) viewPage.getView(ViewPagerHandler.PAGE_HEALTH).findViewById(R.id.textViewBatteryHealth);
-		switch(batteryState.nHealth)
+		switch (batteryState.nHealth)
 		{
 		case BatteryManager.BATTERY_HEALTH_UNKNOWN:
 			tvBattery.setText(getString(R.string.battery_health_unknow));
@@ -357,8 +357,10 @@ public class MainActivity extends Activity
 		}
 
 		/** Battery Voltage **/
-		// tvBattery = (TextView) findViewById(R.id.textViewBatteryVoltage);
-		// tvBattery.setText(String.valueOf(batteryState.nVoltage) + "mV");
+		voltageBar.setAmount((int) (((batteryState.nVoltage * 0.1) - 320) * 2));
+		tvBattery = (TextView) viewPage.getView(ViewPagerHandler.PAGE_VOLTAGE)
+				.findViewById(R.id.textViewBatteryVoltage);
+		tvBattery.setText(String.valueOf(batteryState.nVoltage) + "mV");
 	}
 
 	private OnClickListener itemClickListener = new OnClickListener()
@@ -366,7 +368,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch(v.getId())
+			switch (v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				if (Utility.checkInternet(MainActivity.this))
@@ -486,7 +488,7 @@ public class MainActivity extends Activity
 			return;
 		}
 
-		switch(nIndex)
+		switch (nIndex)
 		{
 		case FootMenuHandler.ITEM_LEVEL:
 			powerGauge.setAmount(-90);
@@ -498,11 +500,10 @@ public class MainActivity extends Activity
 			healthBar.setAmount(0);
 			break;
 		case FootMenuHandler.ITEM_VOLTAGE:
-			voltageBar.addProgress(100);
+			voltageBar.setAmount(0);
 			break;
 		}
 		viewPage.showPage(nIndex);
-		mbPowerStateUpdate = true;
 	}
 
 	private Handler selfHandler = new Handler()
@@ -510,7 +511,7 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch(msg.what)
+			switch (msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();
@@ -554,7 +555,11 @@ public class MainActivity extends Activity
 				facebook.login();
 				break;
 			case MSG.FOOT_MENU_SELECT:
+				mbPowerStateUpdate = false;
 				switchViewPage(msg.arg1);
+				break;
+			case MSG.PAGE_SELECTED:
+				mbPowerStateUpdate = true;
 				break;
 			}
 		}

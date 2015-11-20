@@ -70,7 +70,15 @@ public class TemperatureGaugeView extends RelativeLayout
 		RotateAnimation rotate = new RotateAnimation(mnStartAmount, mnEndAmount, Animation.RELATIVE_TO_SELF, 0.5f,
 				Animation.RELATIVE_TO_SELF, 1.0f);
 		rotate.setInterpolator(new AccelerateDecelerateInterpolator());
-		rotate.setDuration(1000);
+		if (-135 == nAmount)
+		{
+			rotate.setDuration(0);
+		}
+		else
+		{
+			rotate.setDuration(1000);
+		}
+
 		rotate.setAnimationListener(listener);
 		rotate.setFillAfter(true);
 		ivPointer.setAnimation(rotate);

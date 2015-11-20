@@ -1,11 +1,14 @@
 package org.iii.smartcharge.handler;
 
 import org.iii.smartcharge.R;
+import org.iii.smartcharge.common.Logs;
+import org.iii.smartcharge.common.MSG;
 
 import android.app.Activity;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -43,6 +46,31 @@ public class ViewPagerHandler extends BaseHandler
 			public boolean onTouch(View v, MotionEvent event)
 			{
 				return true;
+			}
+		});
+
+		viewPager.addOnPageChangeListener(new OnPageChangeListener()
+		{
+
+			@Override
+			public void onPageScrollStateChanged(int arg0)
+			{
+				if (arg0 == 2)
+				{
+					ViewPagerHandler.this.postMsg(MSG.PAGE_SELECTED, viewPager.getCurrentItem(), 0, null);
+				}
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2)
+			{
+
+			}
+
+			@Override
+			public void onPageSelected(int arg0)
+			{
+
 			}
 		});
 

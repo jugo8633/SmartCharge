@@ -1,6 +1,4 @@
-package org.iii.smartcharge.view;
-
-import org.iii.smartcharge.common.Logs;
+ï»¿package org.iii.smartcharge.view;
 
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
@@ -15,13 +13,13 @@ import android.view.View;
 public class ArcProgressBarView extends View
 {
 
-	private int		bgStrokeWidth		= 80;
-	private int		barStrokeWidth		= 60;
+	private int		bgStrokeWidth		= 90;
+	private int		barStrokeWidth		= 70;
 	private int		bgColor				= Color.DKGRAY;
 	private int		barColor			= Color.GREEN;
-	private int		smallBgColor		= Color.LTGRAY;
+	private int		smallBgColor		= Color.WHITE;
 	private int		progress			= 0;
-	private int		angleOfMoveCircle	= 140;			// ²¾°Ê¤p¶éªº°_©l¨¤«×¡C
+	private int		angleOfMoveCircle	= 140;			// ï¿½ï¿½ï¿½Ê¤pï¿½éªºï¿½_ï¿½lï¿½ï¿½ï¿½×¡C
 	private int		startAngle			= 140;
 	private int		endAngle			= 260;
 	private Paint	mPaintBar			= null;
@@ -29,9 +27,9 @@ public class ArcProgressBarView extends View
 	private Paint	mPaintBg			= null;
 	private Paint	mPaintCircle		= null;
 	private RectF	rectBg				= null;
-	private int		diameter			= 350;			// ª½®|
-	private boolean	showSmallBg			= true;			// ¬O§_Åã¥Ü¤p­I´º¡C
-	private boolean	showMoveCircle		= false;		// ¬O§_Åã¥Ü²¾°Êªº¤p¶é¡C
+	private int		diameter			= 350;			// ï¿½ï¿½ï¿½|
+	private boolean	showSmallBg			= true;			// ï¿½Oï¿½_ï¿½ï¿½Ü¤pï¿½Iï¿½ï¿½ï¿½C
+	private boolean	showMoveCircle		= false;		// ï¿½Oï¿½_ï¿½ï¿½Ü²ï¿½ï¿½Êªï¿½ï¿½pï¿½ï¿½C
 	private int		cx1					= 0;
 	private int		cy1					= 0;
 	private int		arcRadius			= 0;
@@ -65,10 +63,10 @@ public class ArcProgressBarView extends View
 
 	private void init(Context context)
 	{
-		// µe©·§Îªº¯x°}°Ï°ì¡C
+		// ï¿½eï¿½ï¿½ï¿½Îªï¿½ï¿½xï¿½}ï¿½Ï°ï¿½C
 		rectBg = new RectF(bgStrokeWidth, bgStrokeWidth, diameter, diameter);
 
-		// ­pºâ©·§Îªº¶ê¤ß©M¥b®|¡C
+		// ï¿½pï¿½â©·ï¿½Îªï¿½ï¿½ï¿½ß©Mï¿½bï¿½|ï¿½C
 		cx1 = (diameter + bgStrokeWidth) / 2;
 		cy1 = (diameter + bgStrokeWidth) / 2;
 		arcRadius = (diameter - bgStrokeWidth) / 2;
@@ -77,18 +75,18 @@ public class ArcProgressBarView extends View
 
 	private void DrawBar(Canvas canvas)
 	{
-		// ProgressBarµ²§À©M¶}©lµe2­Ó¶ê¡A¹ê²{ProgressBarªº¶ê¨¤¡C
+		// ProgressBarï¿½ï¿½ï¿½ï¿½ï¿½Mï¿½}ï¿½lï¿½e2ï¿½Ó¶ï¿½Aï¿½ï¿½{ProgressBarï¿½ï¿½ï¿½ê¨¤ï¿½C
 		mPaintCircle = new Paint();
 		mPaintCircle.setAntiAlias(true);
 		mPaintCircle.setColor(bgColor);
 
 		canvas.drawCircle((float) (cx1 + arcRadius * Math.cos(startAngle * 3.14 / 180)),
-				(float) (cy1 + arcRadius * Math.sin(startAngle * 3.14 / 180)), bgStrokeWidth / 2, mPaintCircle);// ¤p¶ê
+				(float) (cy1 + arcRadius * Math.sin(startAngle * 3.14 / 180)), bgStrokeWidth / 2, mPaintCircle);// ï¿½pï¿½ï¿½
 
 		canvas.drawCircle((float) (cx1 + arcRadius * Math.cos((180 - startAngle) * 3.14 / 180)),
-				(float) (cy1 + arcRadius * Math.sin((180 - startAngle) * 3.14 / 180)), bgStrokeWidth / 2, mPaintCircle);// ¤p¶ê
+				(float) (cy1 + arcRadius * Math.sin((180 - startAngle) * 3.14 / 180)), bgStrokeWidth / 2, mPaintCircle);// ï¿½pï¿½ï¿½
 
-		// ©·§Î­I´º¡C
+		// ï¿½ï¿½ï¿½Î­Iï¿½ï¿½ï¿½C
 		mPaintBg = new Paint();
 		mPaintBg.setAntiAlias(true);
 		mPaintBg.setStyle(Style.STROKE);
@@ -96,7 +94,7 @@ public class ArcProgressBarView extends View
 		mPaintBg.setColor(bgColor);
 		canvas.drawArc(rectBg, startAngle, endAngle, false, mPaintBg);
 
-		// ©·§Î¤p­I´º¡C
+		// ï¿½ï¿½ï¿½Î¤pï¿½Iï¿½ï¿½ï¿½C
 		if (showSmallBg)
 		{
 			mPaintSmallBg = new Paint();
@@ -107,7 +105,7 @@ public class ArcProgressBarView extends View
 			canvas.drawArc(rectBg, startAngle, endAngle, false, mPaintSmallBg);
 		}
 
-		// ©·§ÎProgressBar¡C
+		// ï¿½ï¿½ï¿½ï¿½ProgressBarï¿½C
 		mPaintBar = new Paint();
 		mPaintBar.setAntiAlias(true);
 		mPaintBar.setStyle(Style.STROKE);
@@ -119,26 +117,25 @@ public class ArcProgressBarView extends View
 
 		canvas.drawArc(rectBg, startAngle, progress, false, mPaintBar);
 
-		// ÀHProgressBar²¾°Êªº¶ê¡C
+		// ï¿½HProgressBarï¿½ï¿½ï¿½Êªï¿½ï¿½ï¿½C
 		if (showMoveCircle)
 		{
 			mPaintCircle.setColor(barColor);
 			canvas.drawCircle((float) (cx1 + arcRadius * Math.cos(angleOfMoveCircle * 3.14 / 180)),
 					(float) (cy1 + arcRadius * Math.sin(angleOfMoveCircle * 3.14 / 180)), bgStrokeWidth / 2,
-					mPaintCircle);// ¤p¶ê
+					mPaintCircle);// ï¿½pï¿½ï¿½
 		}
-
-		// invalidate();
 	}
 
 	/**
 	 * 
 	 * @param progress
 	 */
-	public void addProgress(int _progress)
+	public void setAmount(int nAmount)
 	{
-		mnCurrent = _progress;
+		mnCurrent = nAmount;
 		progress = 0;
+		angleOfMoveCircle = 140;
 		// progress += _progress;
 		// angleOfMoveCircle += _progress;
 		// System.out.println(progress);
@@ -167,7 +164,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ³]¸m©·§Î­I´ºªºµeµ§¼e«×¡C
+	 * ï¿½]ï¿½mï¿½ï¿½ï¿½Î­Iï¿½ï¿½ï¿½ï¿½ï¿½eï¿½ï¿½ï¿½eï¿½×¡C
 	 */
 	public void setBgStrokeWidth(int bgStrokeWidth)
 	{
@@ -175,7 +172,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ³]¸m©·§ÎProgressBarªºµeµ§¼e«×¡C
+	 * ï¿½]ï¿½mï¿½ï¿½ï¿½ï¿½ProgressBarï¿½ï¿½ï¿½eï¿½ï¿½ï¿½eï¿½×¡C
 	 */
 	public void setBarStrokeWidth(int barStrokeWidth)
 	{
@@ -183,7 +180,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ³]¸m©·§Î­I´ºªºÃC¦â¡C
+	 * ï¿½]ï¿½mï¿½ï¿½ï¿½Î­Iï¿½ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½C
 	 */
 	public void setBgColor(int bgColor)
 	{
@@ -191,7 +188,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ³]¸m©·§ÎProgressBarªºÃC¦â¡C
+	 * ï¿½]ï¿½mï¿½ï¿½ï¿½ï¿½ProgressBarï¿½ï¿½ï¿½Cï¿½ï¿½C
 	 */
 	public void setBarColor(int barColor)
 	{
@@ -199,7 +196,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ³]¸m©·§Î¤p­I´ºªºÃC¦â¡C
+	 * ï¿½]ï¿½mï¿½ï¿½ï¿½Î¤pï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½C
 	 */
 	public void setSmallBgColor(int smallBgColor)
 	{
@@ -207,7 +204,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ³]¸m©·§Îªºª½®|¡C
+	 * ï¿½]ï¿½mï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½|ï¿½C
 	 */
 	public void setDiameter(int diameter)
 	{
@@ -215,7 +212,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ¬O§_Åã¥Ü¤p­I´º¡C
+	 * ï¿½Oï¿½_ï¿½ï¿½Ü¤pï¿½Iï¿½ï¿½ï¿½C
 	 */
 	public void setShowSmallBg(boolean showSmallBg)
 	{
@@ -223,7 +220,7 @@ public class ArcProgressBarView extends View
 	}
 
 	/**
-	 * ¬O§_Åã¥Ü²¾°Êªº¤p¶ê¡C
+	 * ï¿½Oï¿½_ï¿½ï¿½Ü²ï¿½ï¿½Êªï¿½ï¿½pï¿½ï¿½C
 	 */
 	public void setShowMoveCircle(boolean showMoveCircle)
 	{
