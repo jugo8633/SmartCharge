@@ -110,7 +110,7 @@ public abstract class DialogHandler
 
 	public static Dialog showLoading(Context context)
 	{
-		final Dialog dialog = new Dialog(context, R.style.MyDialog);
+		final Dialog dialog = new Dialog(context, R.style.DialogReward);
 		dialog.setContentView(R.layout.loading);
 		dialog.setCanceledOnTouchOutside(false);
 		dialog.setCancelable(false);

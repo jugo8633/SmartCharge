@@ -230,7 +230,7 @@ public class MainActivity extends Activity
 
 	private void showLayout(final int nLayout)
 	{
-		switch (nLayout)
+		switch(nLayout)
 		{
 		case ListMenuHandler.ITEM_CHARGE:
 			showQrScanner();
@@ -334,10 +334,9 @@ public class MainActivity extends Activity
 		tvBattery.setText(String.valueOf(batteryState.fTemperature) + "℃");
 
 		/** Battery Health **/
-		// batteryState.nHealth = BatteryManager.BATTERY_HEALTH_OVER_VOLTAGE;
 		healthBar.setAmount(batteryState.nHealth);
 		tvBattery = (TextView) viewPage.getView(ViewPagerHandler.PAGE_HEALTH).findViewById(R.id.textViewBatteryHealth);
-		switch (batteryState.nHealth)
+		switch(batteryState.nHealth)
 		{
 		case BatteryManager.BATTERY_HEALTH_UNKNOWN:
 			tvBattery.setText(getString(R.string.battery_health_unknow));
@@ -368,7 +367,7 @@ public class MainActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			switch (v.getId())
+			switch(v.getId())
 			{
 			case R.id.textViewLoginFacebook:
 				if (Utility.checkInternet(MainActivity.this))
@@ -411,30 +410,16 @@ public class MainActivity extends Activity
 
 	private void showPowerSwitch(String strJSON)
 	{
-		try
-		{
-			JSONObject jsonMain = new JSONObject(strJSON);
-			JSONArray jsonWires = jsonMain.getJSONArray("wires");
-			JSONObject jsonWire = null;
-			for (int i = 0; i < jsonWires.length(); ++i)
-			{
-				jsonWire = jsonWires.getJSONObject(i);
-				Logs.showTrace(
-						"wire:" + String.valueOf(jsonWire.getInt("wire")) + " state:" + jsonWire.getString("state"));
-			}
-
-		}
-		catch (JSONException e)
-		{
-			e.printStackTrace();
-			if (null != dialogLoading)
-				dialogLoading.dismiss();
-			DialogHandler.showAlert(MainActivity.this, MainActivity.this.getString(R.string.power_state_fail), false);
-			return;
-		}
+		boolean bSuccess = powerSwitchHandler.setData(strJSON);
 
 		if (null != dialogLoading)
 			dialogLoading.dismiss();
+
+		if (!bSuccess)
+		{
+			DialogHandler.showAlert(MainActivity.this, MainActivity.this.getString(R.string.power_state_fail), false);
+			return;
+		}
 
 		flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_SWITCH);
 		actionbarHandler.showBackBtn(true);
@@ -488,7 +473,7 @@ public class MainActivity extends Activity
 			return;
 		}
 
-		switch (nIndex)
+		switch(nIndex)
 		{
 		case FootMenuHandler.ITEM_LEVEL:
 			powerGauge.setAmount(-90);
@@ -511,7 +496,7 @@ public class MainActivity extends Activity
 		@Override
 		public void handleMessage(Message msg)
 		{
-			switch (msg.what)
+			switch(msg.what)
 			{
 			case LAYOUT_LOGIN:
 				showLogin();
@@ -525,6 +510,7 @@ public class MainActivity extends Activity
 			case MSG.BACK_CLICK:
 				flipperHandler.close();
 				actionbarHandler.showBackBtn(false);
+				mbPowerStateUpdate = true;
 				break;
 			case MSG.DRAWER_OPEN:
 				actionbarHandler.setMenuState(true);
@@ -540,9 +526,9 @@ public class MainActivity extends Activity
 				setChargeState();
 				break;
 			case MSG.QR_CODE:
-				flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_SWITCH);
-				actionbarHandler.showBackBtn(true);
-				// getPowerPortState((String) msg.obj);
+				// flipperHandler.showView(FlipperHandler.VIEW_ID_POWER_SWITCH);
+				// actionbarHandler.showBackBtn(true);
+				getPowerPortState((String) msg.obj);
 				break;
 			case MSG.FINISH:
 				MainActivity.this.finish();

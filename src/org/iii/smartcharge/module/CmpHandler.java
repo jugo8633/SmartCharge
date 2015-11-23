@@ -21,7 +21,7 @@ public class CmpHandler
 	static public final int	ERR_SOCKET_INVALID	= -4;
 	static public final int	ERR_INVALID_PARAM	= -5;
 
-	private final String					mstrCenterIP					= "140.92.142.158";
+	private final String					mstrCenterIP					= "192.168.0.101";
 	private final int						mnCenterPort					= 6607;
 	private OnPowerStateResponseListener	onPowerStateResponseListener	= null;
 
@@ -105,13 +105,13 @@ public class CmpHandler
 				socket.close();
 				socket = null;
 			}
-			catch (UnknownHostException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
+				if (null != onPowerStateResponseListener)
+				{
+					onPowerStateResponseListener.onResponse(ERR_SOCKET_INVALID, null);
+				}
 			}
 		}
 
