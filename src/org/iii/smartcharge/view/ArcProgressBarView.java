@@ -1,5 +1,7 @@
 ﻿package org.iii.smartcharge.view;
 
+import org.iii.smartcharge.common.Device;
+
 import android.content.Context;
 import android.graphics.BlurMaskFilter;
 import android.graphics.Canvas;
@@ -9,6 +11,7 @@ import android.graphics.Paint.Style;
 import android.graphics.RectF;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewTreeObserver;
 
 public class ArcProgressBarView extends View
 {
@@ -34,6 +37,7 @@ public class ArcProgressBarView extends View
 	private int		cy1					= 0;
 	private int		arcRadius			= 0;
 	private int		mnCurrent			= 0;
+	private float	mnScale				= 1;
 
 	public ArcProgressBarView(Context context)
 	{
@@ -63,10 +67,10 @@ public class ArcProgressBarView extends View
 
 	private void init(Context context)
 	{
-		// �e���Ϊ��x�}�ϰ�C
-		rectBg = new RectF(bgStrokeWidth, bgStrokeWidth, diameter, diameter);
+		mnScale = Device.getScaleSize(context);
 
-		// �p�⩷�Ϊ���ߩM�b�|�C
+		diameter = (int) (300 * mnScale) - bgStrokeWidth;
+		rectBg = new RectF(bgStrokeWidth, bgStrokeWidth, diameter, diameter);
 		cx1 = (diameter + bgStrokeWidth) / 2;
 		cy1 = (diameter + bgStrokeWidth) / 2;
 		arcRadius = (diameter - bgStrokeWidth) / 2;

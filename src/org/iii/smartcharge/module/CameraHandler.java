@@ -376,7 +376,7 @@ public final class CameraHandler
 			Logs.showTrace("Camera Auto Focus Callback");
 			if (bAutoFocus)
 			{
-				handler.sendEmptyMessageDelayed(MSG_AUTO_FOCUS, 1500);
+				handler.sendEmptyMessageDelayed(MSG_AUTO_FOCUS, 2000);
 			}
 		}
 	};

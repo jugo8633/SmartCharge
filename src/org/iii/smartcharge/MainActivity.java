@@ -21,6 +21,7 @@ import org.iii.smartcharge.module.Battery;
 import org.iii.smartcharge.module.Battery.BatteryState;
 import org.iii.smartcharge.module.CmpHandler;
 import org.iii.smartcharge.module.FacebookHandler;
+import org.iii.smartcharge.module.GoogleMapView;
 import org.iii.smartcharge.view.ArcProgressBarView;
 import org.iii.smartcharge.view.GaugeView;
 import org.iii.smartcharge.view.HealthView;
@@ -29,6 +30,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.maps.GoogleMap;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -71,6 +74,7 @@ public class MainActivity extends Activity
 	private ViewPagerHandler		viewPage				= null;
 	private FootMenuHandler			footMenu				= null;
 	private boolean					mbPowerStateUpdate		= true;
+	private GoogleMapView			googleMapView			= null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -90,6 +94,7 @@ public class MainActivity extends Activity
 		cmpHandler.setOnPowerStateResponseListener(powerStatelistener);
 
 		Global.mainHandler = selfHandler;
+
 	}
 
 	@Override
@@ -212,6 +217,10 @@ public class MainActivity extends Activity
 		{
 			powerSwitchHandler = new PowerSwitchHandler(this, selfHandler);
 			powerSwitchHandler.init(flipperHandler.getView(FlipperHandler.VIEW_ID_POWER_SWITCH));
+
+			googleMapView = (GoogleMapView) flipperHandler.getView(FlipperHandler.VIEW_ID_POWER_MAP)
+					.findViewById(R.id.googleMapViewPowerStation);
+			googleMapView.init("map", this, GoogleMap.MAP_TYPE_NORMAL, 25.033493, 121.564101, 17, "Smart Charge");
 		}
 
 		footMenu.setClicked(FootMenuHandler.ITEM_LEVEL);

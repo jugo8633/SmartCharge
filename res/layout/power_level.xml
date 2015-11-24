@@ -7,7 +7,7 @@
 
     <org.iii.smartcharge.view.GaugeView
         android:id="@+id/gaugeViewPower"
-        android:layout_width="400dp"
+        android:layout_width="350dp"
         android:layout_height="200dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"

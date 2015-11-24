@@ -8,5 +8,11 @@ public abstract class Global
 	public static String	fb_nickname	= null;
 	public static Bitmap	fb_picture	= null;
 	public static Handler	mainHandler	= null;
+	public static int		mnUserId	= 2048;
+
+	public static int getUserId()
+	{
+		return (++mnUserId);
+	}
 
 }

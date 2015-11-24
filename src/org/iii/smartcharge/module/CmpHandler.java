@@ -3,6 +3,8 @@ package org.iii.smartcharge.module;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
@@ -91,7 +93,10 @@ public class CmpHandler
 		{
 			try
 			{
-				socket = new Socket(mstrCenterIP, mnCenterPort);
+				InetAddress addr = InetAddress.getByName(mstrCenterIP);
+				socket = new Socket();
+				socket.connect(new InetSocketAddress(addr, mnCenterPort), 3000);
+				// socket = new Socket(mstrCenterIP, mnCenterPort);
 
 				switch(mnCommand)
 				{

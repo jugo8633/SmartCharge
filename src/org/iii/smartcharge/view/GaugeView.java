@@ -46,7 +46,7 @@ public class GaugeView extends RelativeLayout
 		RelativeLayout.LayoutParams ivPointerlayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT,
 				LayoutParams.WRAP_CONTENT);
 		ivPointerlayoutParams.addRule(RelativeLayout.CENTER_HORIZONTAL);
-		ivPointerlayoutParams.setMargins(0, 75, 0, 5);
+		ivPointerlayoutParams.setMargins(0, 75, 0, -5);
 		ivPointer.setLayoutParams(ivPointerlayoutParams);
 		addView(ivPointer);
 

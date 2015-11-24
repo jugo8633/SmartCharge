@@ -1,6 +1,7 @@
 package org.iii.smartcharge.view;
 
 import org.iii.smartcharge.R;
+import org.iii.smartcharge.common.Device;
 import org.iii.smartcharge.common.Logs;
 
 import android.animation.Animator;
@@ -21,7 +22,8 @@ import android.widget.ImageView.ScaleType;
 
 public class HealthView extends RelativeLayout
 {
-	private ImageView ivPointer = null;
+	private ImageView	ivPointer	= null;
+	private int			fscal		= 0;
 
 	public HealthView(Context context)
 	{
@@ -43,11 +45,12 @@ public class HealthView extends RelativeLayout
 
 	private void init(Context context)
 	{
+		fscal = (int) Device.getScaleSize(context);
 		ivPointer = new ImageView(context);
 		ivPointer.setScaleType(ScaleType.CENTER_INSIDE);
 		ivPointer.setAdjustViewBounds(false);
 		ivPointer.setImageResource(R.drawable.btn_number_bg);
-		RelativeLayout.LayoutParams ivPointerlayoutParams = new RelativeLayout.LayoutParams(80, 80);
+		RelativeLayout.LayoutParams ivPointerlayoutParams = new RelativeLayout.LayoutParams(80 * fscal, 80 * fscal);
 		ivPointerlayoutParams.addRule(RelativeLayout.CENTER_VERTICAL);
 		ivPointer.setLayoutParams(ivPointerlayoutParams);
 		addView(ivPointer);
@@ -79,8 +82,8 @@ public class HealthView extends RelativeLayout
 			break;
 		}
 
-		ivPointer.animate().translationX(nX).setDuration(200).setInterpolator(new AccelerateDecelerateInterpolator())
-				.setListener(listener);
+		ivPointer.animate().translationX(nX * fscal).setDuration(200)
+				.setInterpolator(new AccelerateDecelerateInterpolator()).setListener(listener);
 	}
 
 	private AnimatorListener listener = new AnimatorListener()

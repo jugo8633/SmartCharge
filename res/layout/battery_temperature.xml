@@ -3,13 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="horizontal" >
+    android:orientation="vertical" >
 
-    <org.iii.smartcharge.view.TemperatureGaugeView
-        android:id="@+id/gaugeViewTemperature"
+    <RelativeLayout
         android:layout_width="300dp"
         android:layout_height="300dp" >
-    </org.iii.smartcharge.view.TemperatureGaugeView>
+
+        <org.iii.smartcharge.view.TemperatureGaugeView
+            android:id="@+id/gaugeViewTemperature"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/imageViewBatteryTemperaturePointer"
+                android:layout_width="20dp"
+                android:layout_height="120dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="35dp"
+                android:contentDescription="@string/content_description"
+                android:scaleType="fitXY"
+                android:src="@drawable/pointer" />
+
+            <ImageView
+                android:id="@+id/imageViewBatteryTemperatureCircle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:contentDescription="@string/content_description"
+                android:src="@drawable/circle" />
+
+        </org.iii.smartcharge.view.TemperatureGaugeView>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/textViewTemperature"
