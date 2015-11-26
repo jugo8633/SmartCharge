@@ -1,6 +1,8 @@
 package org.iii.smartcharge.module;
 
+import org.iii.smartcharge.R;
 import org.iii.smartcharge.common.Global;
+import org.iii.smartcharge.common.Logs;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
@@ -81,6 +83,7 @@ public class GoogleMapView extends RelativeLayout
 		cp.target(new LatLng(dLatitude, dLongitude));
 		cp.zoom(nZoomLevel);
 		options.camera(cp.build()).mapType(nMapType);
+		options.compassEnabled(false);
 
 		Bundle localBundle = new Bundle();
 		localBundle.putParcelable("MapOptions", options);
@@ -116,6 +119,7 @@ public class GoogleMapView extends RelativeLayout
 		if (!isValidMap())
 		{
 			this.mstrMarker = title;
+			Logs.showError("Google Map Set Marker Fail!!");
 			return;
 		}
 		MarkerOptions markerOpt = new MarkerOptions();
@@ -126,9 +130,10 @@ public class GoogleMapView extends RelativeLayout
 		markerOpt.draggable(false);
 		markerOpt.visible(true);
 		markerOpt.anchor(0.5f, 0.5f);
-		markerOpt.icon(BitmapDescriptorFactory.fromResource(android.R.drawable.ic_menu_mylocation));
+		markerOpt.icon(BitmapDescriptorFactory.fromResource(R.drawable.btn_location_blue));
 		googleMap.addMarker(markerOpt);
 		latLng = null;
+
 	}
 
 	public void drawPolyline(SparseArray<LatLng> listLatLng)
@@ -163,7 +168,8 @@ public class GoogleMapView extends RelativeLayout
 	private void initOption()
 	{
 		MarkerOptions markerOpt = new MarkerOptions();
-		LatLng latLng = new LatLng(mdLatitude, mdLongitude);
+		// LatLng latLng = new LatLng(mdLatitude, mdLongitude);
+		LatLng latLng = new LatLng(25.0584807, 121.5526837);
 		markerOpt.position(latLng);
 		markerOpt.draggable(false);
 		markerOpt.visible(true);
@@ -191,7 +197,12 @@ public class GoogleMapView extends RelativeLayout
 				googleMap = googleMapFragment.getGoogleMap();
 				if (isValidMap())
 				{
+					setMarker(25.0584807, 121.5526837, "資策會", "科技民生大樓");
 					initOption();
+				}
+				else
+				{
+					Logs.showError("googleMap invalid");
 				}
 				break;
 			}
@@ -207,10 +218,12 @@ public class GoogleMapView extends RelativeLayout
 			switch(event.getAction())
 			{
 			case MotionEvent.ACTION_DOWN:
-			//	EventHandler.notify(Global.handlerActivity, EventMessage.MSG_LOCK_PAGE, 0, 0, null);
+				// EventHandler.notify(Global.handlerActivity,
+				// EventMessage.MSG_LOCK_PAGE, 0, 0, null);
 				break;
 			case MotionEvent.ACTION_UP:
-			//	EventHandler.notify(Global.handlerActivity, EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
+				// EventHandler.notify(Global.handlerActivity,
+				// EventMessage.MSG_UNLOCK_PAGE, 0, 0, null);
 				break;
 			}
 
