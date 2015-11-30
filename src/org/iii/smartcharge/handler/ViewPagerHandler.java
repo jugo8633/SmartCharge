@@ -1,7 +1,6 @@
 package org.iii.smartcharge.handler;
 
 import org.iii.smartcharge.R;
-import org.iii.smartcharge.common.Logs;
 import org.iii.smartcharge.common.MSG;
 
 import android.app.Activity;

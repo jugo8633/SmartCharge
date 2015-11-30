@@ -21,6 +21,7 @@ public class FootMenuHandler extends BaseHandler
 	public final static int	ITEM_HEALTH			= 2;
 	public final static int	ITEM_VOLTAGE		= 3;
 	public final static int	ITEM_CHARGE			= 4;
+	public final static int	ITEM_STATION		= 5;
 	private int				mnIndexSelected		= -1;
 
 	private class ViewItem
@@ -97,6 +98,10 @@ public class FootMenuHandler extends BaseHandler
 						getItemText(R.id.textViewBatteryCharge), R.drawable.btn_charge_white,
 						R.drawable.btn_charge_pink, nColorNormal, Color.RED));
 
+		listView.put(ITEM_STATION, new ViewItem(getItemLayout(R.id.linearLayoutStationLocation),
+				getItemImage(R.id.imageViewBatteryStationLocation), getItemText(R.id.textViewBatteryStationLocation),
+				R.drawable.btn_station_location, R.drawable.btn_station_location, nColorNormal, nColorNormal));
+
 		for (int i = 0; i < listView.size(); ++i)
 		{
 			listView.get(i).mLayout.setTag(i);
@@ -124,6 +129,12 @@ public class FootMenuHandler extends BaseHandler
 
 	public void setClicked(int nIndex)
 	{
+		if (ITEM_STATION == nIndex)
+		{
+			postMsg(MSG.FOOT_MENU_SELECT, nIndex, 0, null);
+			return;
+		}
+
 		if (mnIndexSelected != nIndex)
 		{
 			if (-1 != mnIndexSelected)

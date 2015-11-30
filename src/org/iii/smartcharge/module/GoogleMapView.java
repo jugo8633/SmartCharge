@@ -168,8 +168,7 @@ public class GoogleMapView extends RelativeLayout
 	private void initOption()
 	{
 		MarkerOptions markerOpt = new MarkerOptions();
-		// LatLng latLng = new LatLng(mdLatitude, mdLongitude);
-		LatLng latLng = new LatLng(25.0584807, 121.5526837);
+		LatLng latLng = new LatLng(mdLatitude, mdLongitude);
 		markerOpt.position(latLng);
 		markerOpt.draggable(false);
 		markerOpt.visible(true);
@@ -197,7 +196,6 @@ public class GoogleMapView extends RelativeLayout
 				googleMap = googleMapFragment.getGoogleMap();
 				if (isValidMap())
 				{
-					setMarker(25.0584807, 121.5526837, "資策會", "科技民生大樓");
 					initOption();
 				}
 				else

@@ -11,7 +11,7 @@ import org.iii.smartcharge.common.MSG;
 import org.iii.smartcharge.common.Utility;
 import org.iii.smartcharge.handler.ActionbarHandler;
 import org.iii.smartcharge.handler.DialogHandler;
-import org.iii.smartcharge.handler.DrawerMenuHandler;
+//import org.iii.smartcharge.handler.DrawerMenuHandler;
 import org.iii.smartcharge.handler.FlipperHandler;
 import org.iii.smartcharge.handler.FootMenuHandler;
 import org.iii.smartcharge.handler.ListMenuHandler;
@@ -19,6 +19,7 @@ import org.iii.smartcharge.handler.PowerSwitchHandler;
 import org.iii.smartcharge.handler.ViewPagerHandler;
 import org.iii.smartcharge.module.Battery;
 import org.iii.smartcharge.module.Battery.BatteryState;
+import org.iii.smartcharge.module.BitmapHandler;
 import org.iii.smartcharge.module.CmpHandler;
 import org.iii.smartcharge.module.FacebookHandler;
 import org.iii.smartcharge.module.LocationHandler;
@@ -28,10 +29,16 @@ import org.iii.smartcharge.view.GaugeView;
 import org.iii.smartcharge.view.HealthView;
 import org.iii.smartcharge.view.TemperatureGaugeView;
 import com.facebook.appevents.AppEventsLogger;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -45,8 +52,8 @@ import android.widget.TextView;
 public class MainActivity extends Activity
 {
 	private ActionbarHandler		actionbarHandler		= null;
-	private DrawerMenuHandler		drawerMenu				= null;
-	private ListMenuHandler			listMenuHandler			= null;
+	// private DrawerMenuHandler drawerMenu = null;
+	// private ListMenuHandler listMenuHandler = null;
 	private GaugeView				powerGauge				= null;
 	private TemperatureGaugeView	temperatureGauge		= null;
 	private HealthView				healthBar				= null;
@@ -72,6 +79,9 @@ public class MainActivity extends Activity
 	private FootMenuHandler			footMenu				= null;
 	private boolean					mbPowerStateUpdate		= true;
 	private LocationHandler			locationHandler			= null;
+	private GoogleMap				mMap					= null;
+
+	final LatLng III = new LatLng(25.058577, 121.5548295);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -173,10 +183,10 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main);
 		actionbarHandler = new ActionbarHandler(this, selfHandler);
 		actionbarHandler.init();
-		drawerMenu = new DrawerMenuHandler(this, selfHandler);
-		drawerMenu.init(R.id.drawer_layout);
-		listMenuHandler = new ListMenuHandler(this, selfHandler);
-		listMenuHandler.init();
+		// drawerMenu = new DrawerMenuHandler(this, selfHandler);
+		// drawerMenu.init(R.id.drawer_layout);
+		// listMenuHandler = new ListMenuHandler(this, selfHandler);
+		// listMenuHandler.init();
 		viewPage = new ViewPagerHandler(this, selfHandler);
 		viewPage.init();
 		powerGauge = (GaugeView) viewPage.getView(ViewPagerHandler.PAGE_POWER).findViewById(R.id.gaugeViewPower);
@@ -226,10 +236,35 @@ public class MainActivity extends Activity
 				}
 			});
 			locationHandler.start();
+
+			initMap();
 		}
 
 		footMenu.setClicked(FootMenuHandler.ITEM_LEVEL);
 
+	}
+
+	private void initMap()
+	{
+		if (mMap == null)
+		{
+			mMap = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+			if (mMap != null)
+			{
+				Bitmap bmpIcon = BitmapHandler.getResizedBitmap(this, "btn_location_blue", 80, 100);
+
+				mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+				MarkerOptions markerOpt = new MarkerOptions();
+				markerOpt.position(III);
+				markerOpt.title("資策會");
+				markerOpt.snippet("資策會智慧網路");
+				markerOpt.draggable(false);
+				markerOpt.visible(true);
+				markerOpt.anchor(0.5f, 0.5f);
+				markerOpt.icon(BitmapDescriptorFactory.fromBitmap(bmpIcon));
+				mMap.addMarker(markerOpt);
+			}
+		}
 	}
 
 	private void showQrScanner()
@@ -418,10 +453,11 @@ public class MainActivity extends Activity
 		facebook.login();
 	}
 
-	private void powerPortSet(String strController, String strWire, String strPort, String strState)
-	{
-		cmpHandler.powerPortSet(strController, strWire, strPort, strState);
-	}
+	// private void powerPortSet(String strController, String strWire, String
+	// strPort, String strState)
+	// {
+	// cmpHandler.powerPortSet(strController, strWire, strPort, strState);
+	// }
 
 	private void showPowerSwitch(String strJSON)
 	{
@@ -504,6 +540,9 @@ public class MainActivity extends Activity
 		case FootMenuHandler.ITEM_VOLTAGE:
 			voltageBar.setAmount(0);
 			break;
+		case FootMenuHandler.ITEM_STATION:
+			showStationLocation();
+			return;
 		}
 		viewPage.showPage(nIndex);
 	}
@@ -522,7 +561,7 @@ public class MainActivity extends Activity
 				showMainLayout();
 				break;
 			case MSG.MENU_CLICK:
-				drawerMenu.switchDisplay();
+				// drawerMenu.switchDisplay();
 				break;
 			case MSG.BACK_CLICK:
 				locationHandler.removeUpdates();
@@ -537,7 +576,7 @@ public class MainActivity extends Activity
 				actionbarHandler.setMenuState(false);
 				break;
 			case MSG.MENU_SELECTED:
-				drawerMenu.switchDisplay();
+				// drawerMenu.switchDisplay();
 				showLayout(msg.arg1);
 				break;
 			case MSG.CHARGE_STATE:

@@ -1,6 +1,5 @@
 package org.iii.smartcharge.handler;
 
-import org.iii.smartcharge.MainActivity;
 import org.iii.smartcharge.R;
 import org.iii.smartcharge.common.Logs;
 import org.json.JSONArray;

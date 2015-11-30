@@ -2,20 +2,13 @@ package org.iii.smartcharge.view;
 
 import org.iii.smartcharge.R;
 import org.iii.smartcharge.common.Device;
-import org.iii.smartcharge.common.Logs;
 
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.content.Context;
-import android.graphics.Rect;
 import android.os.BatteryManager;
 import android.util.AttributeSet;
-import android.view.View;
-import android.view.ViewParent;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.view.animation.Animation.AnimationListener;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ImageView.ScaleType;

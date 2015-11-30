@@ -22,7 +22,8 @@
             android:contentDescription="@string/content_description"
             android:padding="15dp"
             android:scaleType="centerInside"
-            android:src="@drawable/btn_menu" />
+            android:src="@drawable/btn_menu"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/TextViewPoint"
