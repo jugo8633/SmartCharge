@@ -48,14 +48,14 @@ public class LocationHandler
 		provider = locationManager.getBestProvider(criteria, false);
 		Logs.showTrace("Location Provider:" + provider);
 
-		boolean enabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-
-		if (!enabled)
-		{
-			Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-			theActivity.startActivity(intent);
-		}
-
+		/*
+		 * boolean enabled =
+		 * locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		 * 
+		 * if (!enabled) { Intent intent = new
+		 * Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		 * theActivity.startActivity(intent); }
+		 */
 		location = locationManager.getLastKnownLocation(provider);
 		update();
 	}
