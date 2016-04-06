@@ -11,7 +11,8 @@ import org.iii.smartcharge.common.MSG;
 import org.iii.smartcharge.common.Utility;
 import org.iii.smartcharge.handler.ActionbarHandler;
 import org.iii.smartcharge.handler.DialogHandler;
-//import org.iii.smartcharge.handler.DrawerMenuHandler;
+import org.iii.smartcharge.handler.DrawerMenuHandler;
+// import org.iii.smartcharge.handler.DrawerMenuHandler;
 import org.iii.smartcharge.handler.FlipperHandler;
 import org.iii.smartcharge.handler.FootMenuHandler;
 import org.iii.smartcharge.handler.ListMenuHandler;
@@ -52,8 +53,8 @@ import android.widget.TextView;
 public class MainActivity extends Activity
 {
 	private ActionbarHandler		actionbarHandler		= null;
-	// private DrawerMenuHandler drawerMenu = null;
-	// private ListMenuHandler listMenuHandler = null;
+	private DrawerMenuHandler		drawerMenu				= null;
+	private ListMenuHandler			listMenuHandler			= null;
 	private GaugeView				powerGauge				= null;
 	private TemperatureGaugeView	temperatureGauge		= null;
 	private HealthView				healthBar				= null;
@@ -81,7 +82,7 @@ public class MainActivity extends Activity
 	private LocationHandler			locationHandler			= null;
 	private GoogleMap				mMap					= null;
 
-	final LatLng III = new LatLng(25.058577, 121.5548295);
+	final LatLng					III						= new LatLng(25.058577, 121.5548295);
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -183,10 +184,10 @@ public class MainActivity extends Activity
 		setContentView(R.layout.activity_main);
 		actionbarHandler = new ActionbarHandler(this, selfHandler);
 		actionbarHandler.init();
-		// drawerMenu = new DrawerMenuHandler(this, selfHandler);
-		// drawerMenu.init(R.id.drawer_layout);
-		// listMenuHandler = new ListMenuHandler(this, selfHandler);
-		// listMenuHandler.init();
+		drawerMenu = new DrawerMenuHandler(this, selfHandler);
+		drawerMenu.init(R.id.drawer_layout);
+		listMenuHandler = new ListMenuHandler(this, selfHandler);
+		listMenuHandler.init();
 		viewPage = new ViewPagerHandler(this, selfHandler);
 		viewPage.init();
 		powerGauge = (GaugeView) viewPage.getView(ViewPagerHandler.PAGE_POWER).findViewById(R.id.gaugeViewPower);
@@ -244,6 +245,7 @@ public class MainActivity extends Activity
 
 	}
 
+	@SuppressWarnings("deprecation")
 	private void initMap()
 	{
 		if (mMap == null)
